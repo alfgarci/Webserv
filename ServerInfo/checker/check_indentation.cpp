@@ -1,6 +1,6 @@
 #include "../ServerInfo.hpp"
 
-# define TABULATION '\t'
+# define NEW_LINE '\n'
 
 /*
 @brief This funtion check if the given string contain the right indentation,
@@ -8,7 +8,7 @@ a set of \t followed by a alphabetic char.void
 @param s the string to check.
 @return True if it have the right structure, False if not.
 */
-bool	ServerInfo::CheckIndentation(string s)
+bool	ServerInfo::check_indentation(string s)
 {
 	string::iterator	it = s.begin();
 
@@ -16,13 +16,14 @@ bool	ServerInfo::CheckIndentation(string s)
 	while
 	(
 		it != s.end()
-		&& *it == TABULATION
+		&& *it == TOKEN_SPACE 
 	)
 		it++;
 	if
 	(
-		*it != TABULATION
+		*it != TOKEN_SPACE
 		&& !isalpha(*it)
+		&& *it != NEW_LINE
 	)
 	{
 		return (false);

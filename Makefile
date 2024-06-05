@@ -34,7 +34,8 @@ SERVER_INFO_SRCS_CLASS = $(addsuffix .cpp, $(SERVER_INFO_CLASS))
 
 
 SERVER_INFO_CHECKER = \
-CheckIndentation \
+check_indentation \
+check_indentation_level \
 
 SERVER_INFO_CHECKER_DIR = checker/
 SERVER_INFO_CHECKER_SRCS = \
@@ -53,7 +54,8 @@ TESTER_CLASS = tester
 TESTER_SRCS_CLASS = $(addsuffix .cpp, $(TESTER_CLASS))
 
 TESTER_CHECKER = \
-test_checkindentation \
+test_check_indentation \
+test_check_indentation_level \
 
 TESTER_CHECKER_DIR = test_checker/
 TESTER_CHECKER_SRCS = \

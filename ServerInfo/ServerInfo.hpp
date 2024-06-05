@@ -13,6 +13,8 @@ using std::cin;
 using std::endl;
 using std::cerr;
 
+# define TOKEN_SPACE '\t'
+
 # define SERVERINFO_CONSTRUCTOR_LOG_COLOR "\033[1;30m"
 # define SERVERINFO_RESET_COLOR "\033[0m"
 # define SERVERINFO_DEFAULT_DO_LOG false
@@ -34,17 +36,17 @@ class ServerInfo
 		~ServerInfo();
 		ServerInfo & operator = (const ServerInfo &ServerInfo);
 
+		//CHECKER
+		//-------------------------------------------------------
+		
+		static bool	check_indentation(string s);
+		static bool check_indentation_level(string s, int expected_level);
+
 		//-------------------------------------------------------
 
 	protected:
 		bool	_do_log;
 
-		//CHECKER
-		//-------------------------------------------------------
-		
-		bool	CheckIndentation(string s);
-
-		//-------------------------------------------------------
 
 	private:
 		//LOG

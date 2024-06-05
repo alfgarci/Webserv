@@ -7,7 +7,8 @@ void	test_collection(void)
 	int		test_number;
 
 	test_number = 1;
-	t.test_CheckIndentation(test_number++);
+	t.test_check_indentation(test_number);
+	t.test_check_indentation_level(test_number);
 }
 
 int	main(void)

@@ -43,7 +43,8 @@ class tester : public ServerInfo
 		//TEST_CHECKER
 		//-------------------------------------------------------
 
-		void	test_CheckIndentation(int test_number);
+		void	test_check_indentation(int &test_number);
+		void	test_check_indentation_level(int &test_number);
 
 		//-------------------------------------------------------
 
