@@ -5,6 +5,7 @@
 
 # include <iostream>
 # include <string>
+# include <fstream>
 
 using std::cout;
 using std::string;
@@ -37,6 +38,13 @@ class ServerInfo
 
 	protected:
 		bool	_do_log;
+
+		//CHECKER
+		//-------------------------------------------------------
+		
+		bool	CheckIndentation(string s);
+
+		//-------------------------------------------------------
 
 	private:
 		//LOG

@@ -32,13 +32,42 @@ SERVER_INFO_DIR = ServerInfo/
 SERVER_INFO_CLASS = ServerInfo
 SERVER_INFO_SRCS_CLASS = $(addsuffix .cpp, $(SERVER_INFO_CLASS))
 
+
+SERVER_INFO_CHECKER = \
+CheckIndentation \
+
+SERVER_INFO_CHECKER_DIR = checker/
+SERVER_INFO_CHECKER_SRCS = \
+$(addprefix $(SERVER_INFO_CHECKER_DIR), $(addsuffix .cpp, $(SERVER_INFO_CHECKER)))
+
+
 SERVER_INFO_SRCS = \
 	$(SERVER_INFO_SRCS_CLASS) \
+	$(SERVER_INFO_CHECKER_SRCS) \
+
+#-------------------------------------------------------------------TESTER
+
+TESTER_DIR = tester
+
+TESTER_CLASS = tester
+TESTER_SRCS_CLASS = $(addsuffix .cpp, $(TESTER_CLASS))
+
+TESTER_CHECKER = \
+test_checkindentation \
+
+TESTER_CHECKER_DIR = test_checker/
+TESTER_CHECKER_SRCS = \
+$(addprefix $(TESTER_CHECKER_DIR), $(addsuffix .cpp, $(TESTER_CHECKER)))
+
+TESTER_SRCS = \
+	$(TESTER_SRCS_CLASS) \
+	$(TESTER_CHECKER_SRCS) \
 
 #-------------------------------------------------------------------SRCS
 
 SRCS =	\
 		$(addprefix $(SERVER_INFO_DIR)/, $(SERVER_INFO_SRCS)) \
+		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
 		$(addsuffix .cpp, $(MAIN)) \
 
 #-------------------------------------------------------------------RULES
