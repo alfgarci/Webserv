@@ -14,6 +14,8 @@ using std::endl;
 using std::cerr;
 
 # define TOKEN_SPACE '\t'
+# define TOKEN_INDENTATION ':'
+# define NEW_LINE '\n'
 
 # define SERVERINFO_CONSTRUCTOR_LOG_COLOR "\033[1;30m"
 # define SERVERINFO_RESET_COLOR "\033[0m"
@@ -41,6 +43,12 @@ class ServerInfo
 		
 		static bool	check_indentation(string s);
 		static bool check_indentation_level(string s, int expected_level);
+		static bool check_for_indentation_token(string s);
+
+		//IS_FUNS
+		//-------------------------------------------------------
+
+		static bool	is_char_in_keyword_set(char c);
 
 		//-------------------------------------------------------
 

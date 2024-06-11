@@ -7,8 +7,14 @@ void	test_collection(void)
 	int		test_number;
 
 	test_number = 1;
+	cout << "TEST_CHECKER" << endl;
+	cout << "----------------------------------" << endl;
 	t.test_check_indentation(test_number);
 	t.test_check_indentation_level(test_number);
+	t.test_check_for_indentation_token(test_number);
+	cout << endl << "TEST IS_FUNS" << endl;
+	cout << "----------------------------------" << endl;
+	t.test_is_char_in_keyword_set(test_number);
 }
 
 int	main(void)

@@ -27,7 +27,7 @@ MAIN = main
 
 #-------------------------------------------------------------------SERVER_INFO
 
-SERVER_INFO_DIR = ServerInfo/
+SERVER_INFO_DIR = ServerInfo
 
 SERVER_INFO_CLASS = ServerInfo
 SERVER_INFO_SRCS_CLASS = $(addsuffix .cpp, $(SERVER_INFO_CLASS))
@@ -36,15 +36,24 @@ SERVER_INFO_SRCS_CLASS = $(addsuffix .cpp, $(SERVER_INFO_CLASS))
 SERVER_INFO_CHECKER = \
 check_indentation \
 check_indentation_level \
+check_for_indentation_token \
 
 SERVER_INFO_CHECKER_DIR = checker/
 SERVER_INFO_CHECKER_SRCS = \
 $(addprefix $(SERVER_INFO_CHECKER_DIR), $(addsuffix .cpp, $(SERVER_INFO_CHECKER)))
 
+SERVER_INFO_IS_FUNS = \
+is_char_in_keyword_set \
+
+SERVER_INFO_IS_FUNS_DIR = is_funs/
+SERVER_INFO_IS_FUNS_SRCS = \
+$(addprefix $(SERVER_INFO_IS_FUNS_DIR), $(addsuffix .cpp, $(SERVER_INFO_IS_FUNS)))
+
 
 SERVER_INFO_SRCS = \
 	$(SERVER_INFO_SRCS_CLASS) \
 	$(SERVER_INFO_CHECKER_SRCS) \
+	$(SERVER_INFO_IS_FUNS_SRCS) \
 
 #-------------------------------------------------------------------TESTER
 
@@ -56,14 +65,23 @@ TESTER_SRCS_CLASS = $(addsuffix .cpp, $(TESTER_CLASS))
 TESTER_CHECKER = \
 test_check_indentation \
 test_check_indentation_level \
+test_check_for_indentation_token \
 
 TESTER_CHECKER_DIR = test_checker/
 TESTER_CHECKER_SRCS = \
 $(addprefix $(TESTER_CHECKER_DIR), $(addsuffix .cpp, $(TESTER_CHECKER)))
 
+TESTER_IS_FUNS = \
+test_is_char_in_keyword_set \
+
+TESTER_IS_FUNS_DIR = test_is_funs/
+TESTER_IS_FUNS_SRCS = \
+$(addprefix $(TESTER_IS_FUNS_DIR), $(addsuffix .cpp, $(TESTER_IS_FUNS)))
+
 TESTER_SRCS = \
 	$(TESTER_SRCS_CLASS) \
 	$(TESTER_CHECKER_SRCS) \
+	$(TESTER_IS_FUNS_SRCS) \
 
 #-------------------------------------------------------------------SRCS
 

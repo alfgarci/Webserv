@@ -1,7 +1,5 @@
 #include "../ServerInfo.hpp"
 
-# define NEW_LINE '\n'
-
 /*
 @brief This funtion check if the given string contain the right indentation,
 a set of \t followed by a alphabetic char.void
