@@ -1,12 +1,24 @@
-// HTTPRequest.hpp
+// HTTPRequest.cpp
 
+// Files included
 #include "HTTPRequest.hpp"
 
-std::vector<std::string> HTTPRequest::validMethods;
-bool HTTPRequest::initialized = false;
-const std::string methods[] = {"GET", "POST", "DELETE"};
-const int numMethods = sizeof(methods) / sizeof(methods[0]);
+// Default constructor
+HTTPRequest::HTTPRequest(void)
+{
+    fieldSet[METHOD] = false;
+    fieldSet[PATH] = false;
+    fieldSet[HTTP_VERSION] = false;
+    fieldSet[HOST] = false;
+    fieldSet[CONNECTION] = false;
+    fieldSet[CONTENT_LENGTH] = false;
+    fieldSet[CONTENT_TYPE] = false;
+    fieldSet[TRANSFER_ENCODING] = false;
+    fieldSet[BODY] = false;
 
+    fieldFound = fieldSet;
+}
+// Constructor
 HTTPRequest::HTTPRequest(const std::string& request)
 {
     fieldSet[METHOD] = false;
@@ -22,21 +34,14 @@ HTTPRequest::HTTPRequest(const std::string& request)
     fieldFound = fieldSet;
     parse(request);
 }
-
-void HTTPRequest::initializeValidMethods()
-{
-    for (int i = 0; i < numMethods; ++i)
-        validMethods.push_back(methods[i]);
-}
+// Destructor
+HTTPRequest::~HTTPRequest() {}
 
 bool HTTPRequest::isValidHTTPMethod(const std::string& method)
 {
-    if (!initialized)
-    {
-        initializeValidMethods();
-        initialized = true;
-    }
-    return std::find(validMethods.begin(), validMethods.end(), method) != validMethods.end();
+    if (method == "GET" || method == "POST" || method == "DELETE")
+        return (true);
+    return (false);
 }
 
 bool HTTPRequest::isValidHTTPVersion(const std::string& version)
@@ -48,7 +53,7 @@ bool HTTPRequest::isValidHTTPVersion(const std::string& version)
     }
     throw std::runtime_error("HTTP version not valid");
 }
-
+// Check path field
 bool HTTPRequest::isValidPathFormat(const std::string& path)
 {
     if (path.empty() || path[0] != '/')
@@ -59,9 +64,9 @@ bool HTTPRequest::isValidPathFormat(const std::string& path)
         if (!(std::isalnum(c) || c == '/' || c == '-' || c == '_' || c == '.'))
             return false;
     }
-    return true;
+    return (true);
 }
-
+// Function to erase unnecessary spaces
 std::string HTTPRequest::trim(const std::string& str)
 {
     size_t first = str.find_first_not_of(' ');
@@ -69,6 +74,7 @@ std::string HTTPRequest::trim(const std::string& str)
     return (first == std::string::npos || last == std::string::npos) ? "" : str.substr(first, last - first + 1);
 }
 
+// Function to check HTTP request format
 void HTTPRequest::parse(const std::string& request)
 {
     char *end;
@@ -77,25 +83,40 @@ void HTTPRequest::parse(const std::string& request)
     std::stringstream bodyStream;
     unsigned long length;
 
-    std::getline(iss, line);
-    std::istringstream lineStream(line);
-    std::string method, path, httpVersion;
-    lineStream >> method >> path >> httpVersion;
-    if (!isValidHTTPMethod(method))
-        throw std::runtime_error("HTTP method not valid");
-    if (!isValidHTTPVersion(httpVersion))
-        throw std::runtime_error("HTTP version not valid");
-    if (!isValidPathFormat(path))
-        throw std::runtime_error("Path format not valid");
-    setField(METHOD, method);
-    setField(PATH, path);
-    setField(HTTP_VERSION, httpVersion);
-
-    // Leer y procesar las líneas restantes
+    // Read request first line
+    if (std::getline(iss, line))
+    {
+        // If there is an '\r' it is erased
+        if (!line.empty() && line[line.size() - 1] == '\r')
+            line.erase(line.size() - 1);
+        std::istringstream lineStream(line);
+        std::string method, path, httpVersion;
+        lineStream >> method >> path >> httpVersion;
+        // Checking if method is valid
+        if (!isValidHTTPMethod(method))
+            throw std::runtime_error("HTTP method not valid");
+        // Checking if HTTP version is valid
+        if (!isValidHTTPVersion(httpVersion))
+            throw std::runtime_error("HTTP version not valid");
+        // Checking if path is valid
+        if (!isValidPathFormat(path))
+            throw std::runtime_error("Path format not valid");
+        // Method is set
+        setField(METHOD, method);
+        // Path is set
+        setField(PATH, path);
+        // HTTP versión is set
+        setField(HTTP_VERSION, httpVersion);
+    }
+    else
+        throw std::runtime_error("Empty HTTP request");
+    // Read and process remaining lines
     while (std::getline(iss, line))
     {
+        if (!line.empty() && line[line.size() - 1] == '\r')
+            line.erase(line.size() - 1);  // Eliminar '\r' si está presente
         // Find headers end
-        if (line == "\r" || line.empty())
+        if (line.empty())
             break;
         std::size_t pos = line.find(':');
         if (pos != std::string::npos)
@@ -130,10 +151,11 @@ void HTTPRequest::parse(const std::string& request)
             }
         }
     }
-    // Si no se encontró el campo Host o está vacío, lanzar una excepción
+    // If host is not found or it is empty throw an exception
     if (!fieldFound[HOST] || fieldValues[HOST].empty())
         throw std::runtime_error("Host field not found or empty");
-    if (!fieldFound[CONNECTION] && fieldValues[HTTP_VERSION] == "HTTP/1.1")
+    // If connection is not given, then connection value is "keep-alive"
+    if (!fieldFound[CONNECTION])
     {
         setField(CONNECTION, "keep-alive");
         fieldFound[CONNECTION] = true;
@@ -155,6 +177,9 @@ void HTTPRequest::parse(const std::string& request)
             // Read body
             std::string bodyTemp;
             std::getline(iss, bodyTemp);
+            // If \r is present it is erased
+            if (!bodyTemp.empty() && bodyTemp[bodyTemp.size() - 1] == '\r')
+                bodyTemp.erase(bodyTemp.size() - 1);
             setField(BODY, trim(bodyTemp));
             if (fieldValues[BODY].size() != length)
                 throw std::runtime_error("Content-Length does not match the body length");
@@ -163,18 +188,25 @@ void HTTPRequest::parse(const std::string& request)
         {
             while (std::getline(iss, line))
             {
+                // If \r is present it is erased
+                if (!line.empty() && line[line.size() - 1] == '\r')
+                    line.erase(line.size() - 1);
                 length = strtoul(line.c_str(), &end, 16);
                 if (*end != '\0')
                     throw std::runtime_error("Chunk size conversion error");
                 if (length == 0)
                 {
-                    std::getline(iss, line); // Leer el último \r\n después del chunk 0
+                    std::getline(iss, line);
+                    // If \r is present it is erased
+                    if (!line.empty() && line[line.size() - 1] == '\r')
+                        line.erase(line.size() - 1);  // Eliminar '\r' si está presente
                     break;
                 }
                 std::string chunk(length, '\0');
                 iss.read(&chunk[0], (std::streamsize)length);
                 bodyStream << chunk;
-                iss.ignore(1); // Ignorar \n después del chunk
+                // Ignore \n after chunk
+                iss.ignore(1);
             }
             setField(BODY, bodyStream.str());
             if (fieldValues[BODY].empty())
@@ -182,15 +214,15 @@ void HTTPRequest::parse(const std::string& request)
         }
     }
 }
-
+// Get field value
 std::string HTTPRequest::getField(FieldType field) const
 {
     std::map<FieldType, std::string>::const_iterator it = fieldValues.find(field);
     if (it != fieldValues.end())
         return it->second;
-    return "";
+    return ("");
 }
-
+// Set field value
 void HTTPRequest::setField(FieldType field, const std::string& value)
 {
     if (!fieldSet[field])
@@ -201,8 +233,21 @@ void HTTPRequest::setField(FieldType field, const std::string& value)
     else
         throw std::runtime_error("Only one value for each field is allowed");
 }
-
-const std::vector<std::string>& HTTPRequest::getValidMethods()
+// Copy constructor
+HTTPRequest::HTTPRequest(const HTTPRequest &httpRequest)
 {
-    return validMethods;
+    fieldValues = httpRequest.fieldValues;
+    fieldSet = httpRequest.fieldSet;
+    fieldFound = httpRequest.fieldFound;
+}
+// Assignation operator
+HTTPRequest& HTTPRequest::operator=(const HTTPRequest &httpRequest)
+{
+    if (this != &httpRequest) // Verificar auto-asignación
+    {
+        fieldValues = httpRequest.fieldValues;
+        fieldSet = httpRequest.fieldSet;
+        fieldFound = httpRequest.fieldFound;
+    }
+    return (*this);
 }
