@@ -54,8 +54,6 @@ class HTTPRequest
         std::map<FieldType, bool> fieldFound;
         // For checking if field value is set
         std::map<FieldType, bool> fieldSet;
-        // For storing valid methods
-        //static std::vector<std::string> validMethods;
         // Function to check if method is valid
         static bool isValidHTTPMethod(const std::string& method);
         // Function to check if HTTP versión is valid
