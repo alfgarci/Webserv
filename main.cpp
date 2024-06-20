@@ -12,6 +12,7 @@ void	test_collection(void)
 	t.test_check_indentation(test_number);
 	t.test_check_indentation_level(test_number);
 	t.test_check_for_indentation_token(test_number);
+	t.test_check_for_assignment_token(test_number);
 	cout << endl << "TEST IS_FUNS" << endl;
 	cout << "----------------------------------" << endl;
 	t.test_is_char_in_keyword_set(test_number);

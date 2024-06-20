@@ -37,6 +37,7 @@ SERVER_INFO_CHECKER = \
 check_indentation \
 check_indentation_level \
 check_for_indentation_token \
+check_for_assignment_token \
 
 SERVER_INFO_CHECKER_DIR = checker/
 SERVER_INFO_CHECKER_SRCS = \
@@ -66,6 +67,7 @@ TESTER_CHECKER = \
 test_check_indentation \
 test_check_indentation_level \
 test_check_for_indentation_token \
+test_check_for_assignment_token \
 
 TESTER_CHECKER_DIR = test_checker/
 TESTER_CHECKER_SRCS = \

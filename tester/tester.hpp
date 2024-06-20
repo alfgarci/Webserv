@@ -46,6 +46,7 @@ class tester : public ServerInfo
 		void	test_check_indentation(int &test_number);
 		void	test_check_indentation_level(int &test_number);
 		void	test_check_for_indentation_token(int &test_number);
+		void	test_check_for_assignment_token(int &test_number);
 
 		//TEST_IS_FUNS
 		//-------------------------------------------------------
