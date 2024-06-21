@@ -52,6 +52,7 @@ class tester : public ServerInfo
 		//-------------------------------------------------------
 
 		void	test_is_char_in_keyword_set(int &test_number);
+		void	test_is_keyword_in_set(int &test_number);
 
 		//-------------------------------------------------------
 

@@ -16,6 +16,7 @@ void	test_collection(void)
 	cout << endl << "TEST IS_FUNS" << endl;
 	cout << "----------------------------------" << endl;
 	t.test_is_char_in_keyword_set(test_number);
+	t.test_is_keyword_in_set(test_number);
 }
 
 int	main(void)

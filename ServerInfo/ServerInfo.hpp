@@ -6,6 +6,7 @@
 # include <iostream>
 # include <string>
 # include <fstream>
+# include "keywords.hpp"
 
 using std::cout;
 using std::string;
@@ -27,21 +28,6 @@ using std::cerr;
 # define SERVERINFO_COPY_ASSIGNMENT_LOG "ServerInfo copy assignment called"
 # define SERVERINFO_DESTRUCTOR_LOG "ServerInfo destructor called"
 
-enum e_name_keywords
-{
-	server = 0,
-	port = 1,
-	host = 1,
-	server_name = 1,
-	client_body_limit = 1,
-	route = 1,
-	accepted_http_metods = 2,
-	http_redirections = 2,
-	search_dir = 2,
-	toogle_dir_listen = 2,
-	default_file_to_answer = 2,
-	CGI = 2
-};
 
 class ServerInfo
 {
@@ -62,11 +48,13 @@ class ServerInfo
 		static bool check_indentation_level(string s, int expected_level);
 		static bool check_for_indentation_token(string s);
 		static bool	check_for_assignment_token(string s);
+		static bool check_for_keyword_in_line(string s);
 
 		//IS_FUNS
 		//-------------------------------------------------------
 
 		static bool	is_char_in_keyword_set(char c);
+		static bool	is_keyword_in_set(string keyword, Dictionary set);
 
 		//-------------------------------------------------------
 

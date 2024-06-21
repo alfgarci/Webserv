@@ -45,6 +45,7 @@ $(addprefix $(SERVER_INFO_CHECKER_DIR), $(addsuffix .cpp, $(SERVER_INFO_CHECKER)
 
 SERVER_INFO_IS_FUNS = \
 is_char_in_keyword_set \
+is_keyword_in_set \
 
 SERVER_INFO_IS_FUNS_DIR = is_funs/
 SERVER_INFO_IS_FUNS_SRCS = \
@@ -75,6 +76,7 @@ $(addprefix $(TESTER_CHECKER_DIR), $(addsuffix .cpp, $(TESTER_CHECKER)))
 
 TESTER_IS_FUNS = \
 test_is_char_in_keyword_set \
+test_is_keyword_in_set \
 
 TESTER_IS_FUNS_DIR = test_is_funs/
 TESTER_IS_FUNS_SRCS = \
