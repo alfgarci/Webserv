@@ -92,4 +92,26 @@ static const Dictionary Base_dictionary = DictionaryCreator::create_base_dict();
 static const Dictionary Server_dictionary = DictionaryCreator::create_server_dict();
 static const Dictionary Route_dictionary = DictionaryCreator::create_route_dict();
 
+enum e_indentation_level_keywords
+{
+	base_level = 0,
+	server_level = 1,
+	route_level = 2
+};
+
+class IndentationCreator
+{
+	public:
+		static std::map<int, Dictionary> create_indentation_dict()
+		{
+			std::map<int, Dictionary>	d;
+
+			d[base_level] = Base_dictionary;
+			d[server_level] = Server_dictionary;
+			d[route_level] = Route_dictionary;
+			return (d);
+		}
+};
+
+static const std::map<int, Dictionary> Indentaton_dictionary = IndentationCreator::create_indentation_dict();
 #endif

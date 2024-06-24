@@ -1,30 +1,5 @@
 #include "../ServerInfo.hpp"
 
-static void	pass_tabulations(string::iterator &it, string &s)
-{
-
-	while 
-	(
-		it != s.end()
-		&& *it == TOKEN_SPACE
-	)
-	{
-		it++;
-	}
-}
-
-static void pass_keyword_set_chars(string::iterator &it, string &s)
-{
-	while
-	(
-		it != s.end()
-		&& ServerInfo::is_char_in_keyword_set(*it)
-	)
-	{
-		it++;
-	}
-}
-
 /*
 @brief Check if the line contain an indentation token and has the right format for it:
  {TABULATION}{KEYWORD}{TOKEN}{EOL}.

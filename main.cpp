@@ -17,6 +17,7 @@ void	test_collection(void)
 	cout << "----------------------------------" << endl;
 	t.test_is_char_in_keyword_set(test_number);
 	t.test_is_keyword_in_set(test_number);
+	t.test_check_for_keyword_in_line(test_number);
 }
 
 int	main(void)

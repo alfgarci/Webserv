@@ -48,7 +48,7 @@ class ServerInfo
 		static bool check_indentation_level(string s, int expected_level);
 		static bool check_for_indentation_token(string s);
 		static bool	check_for_assignment_token(string s);
-		static bool check_for_keyword_in_line(string s);
+		static bool check_for_keyword_in_line(string s, int indentation_level);
 
 		//IS_FUNS
 		//-------------------------------------------------------
@@ -67,6 +67,12 @@ class ServerInfo
 		//-------------------------------------------------------
 
 		void	constructor_log(string s);
+
+		//CHECKER
+		//-------------------------------------------------------
+
+		static void	pass_tabulations(string::iterator &it, string &s);
+		static void pass_keyword_set_chars(string::iterator &it, string &s);
 };
 
 #endif
