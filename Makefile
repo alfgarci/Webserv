@@ -39,6 +39,7 @@ check_indentation_level \
 check_for_indentation_token \
 check_for_assignment_token \
 check_for_keyword_in_line \
+check_syntax \
 pass_tabulations \
 pass_keyword_set_chars \
 
@@ -73,6 +74,7 @@ test_check_indentation_level \
 test_check_for_indentation_token \
 test_check_for_assignment_token \
 test_check_for_keyword_in_line \
+test_check_syntax
 
 TESTER_CHECKER_DIR = test_checker/
 TESTER_CHECKER_SRCS = \

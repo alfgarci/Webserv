@@ -2,7 +2,7 @@
 
 /*
 @brief This funtion check if the given string contain the right indentation,
-a set of \t followed by a alphabetic char.void
+a set of '\\t' followed by a alphabetic char.
 @param s the string to check.
 @return True if it have the right structure, False if not.
 */

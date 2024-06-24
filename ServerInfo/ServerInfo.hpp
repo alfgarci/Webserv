@@ -6,7 +6,10 @@
 # include <iostream>
 # include <string>
 # include <fstream>
+# include <sstream>
+
 # include "keywords.hpp"
+# include "structs.hpp"
 
 using std::cout;
 using std::string;
@@ -28,6 +31,10 @@ using std::cerr;
 # define SERVERINFO_COPY_ASSIGNMENT_LOG "ServerInfo copy assignment called"
 # define SERVERINFO_DESTRUCTOR_LOG "ServerInfo destructor called"
 
+# define ERROR_CANT_OPEN_FILE "Can't open file, check that you send the right route, i have the \
+access to the file, and that it exist, thanks ^^"
+# define BAD_SYNTAX "Bad syntax at line: "
+# define BAD_INDENTATION "Bad indentation at line: "
 
 class ServerInfo
 {
@@ -49,6 +56,7 @@ class ServerInfo
 		static bool check_for_indentation_token(string s);
 		static bool	check_for_assignment_token(string s);
 		static bool check_for_keyword_in_line(string s, int indentation_level);
+		static void	check_syntax(string s, int indentation_level, int line);
 
 		//IS_FUNS
 		//-------------------------------------------------------
@@ -56,11 +64,17 @@ class ServerInfo
 		static bool	is_char_in_keyword_set(char c);
 		static bool	is_keyword_in_set(string keyword, Dictionary set);
 
+		//STORE
+		//-------------------------------------------------------
+
+		static void				store_server(std::fstream &file);
+		static void				store_route(std::fstream &file);
+		static list<t_server>	store_file(string route);
+
 		//-------------------------------------------------------
 
 	protected:
 		bool	_do_log;
-
 
 	private:
 		//LOG
@@ -74,5 +88,13 @@ class ServerInfo
 		static void	pass_tabulations(string::iterator &it, string &s);
 		static void pass_keyword_set_chars(string::iterator &it, string &s);
 };
+
+template <typename T>
+std::string to_string(const T& value)
+{
+	std::ostringstream oss;
+	oss << value;
+	return oss.str();
+}
 
 #endif

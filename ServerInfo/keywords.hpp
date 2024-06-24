@@ -45,7 +45,7 @@ enum e_server_keywords
 
 enum e_route_keywords
 {
-	accepted_http_metods = 0,
+	accepted_http_methods = 0,
 	http_redirections = 1,
 	search_dir = 2,
 	toogle_dir_listen = 3,
@@ -78,7 +78,7 @@ class DictionaryCreator
 		{
 			Dictionary	d;
 
-			d[accepted_http_metods] = ACCEPTED_HTTP_METHODS_KEYWORD;
+			d[accepted_http_methods] = ACCEPTED_HTTP_METHODS_KEYWORD;
 			d[http_redirections] = HTTP_REDIRECTIONS_KEYWORD;
 			d[search_dir] = SEARCH_DIR_KEYWORD;
 			d[toogle_dir_listen] = TOOGLE_DIR_LISTEN_KEYWORD;
@@ -114,4 +114,5 @@ class IndentationCreator
 };
 
 static const std::map<int, Dictionary> Indentaton_dictionary = IndentationCreator::create_indentation_dict();
+
 #endif
