@@ -15,7 +15,6 @@ HTTPRequest::HTTPRequest(void)
     fieldSet[CONTENT_TYPE] = false;
     fieldSet[TRANSFER_ENCODING] = false;
     fieldSet[BODY] = false;
-
     fieldFound = fieldSet;
 }
 // Constructor
@@ -113,8 +112,9 @@ void HTTPRequest::parse(const std::string& request)
     // Read and process remaining lines
     while (std::getline(iss, line))
     {
+        // Erase '\r' if present
         if (!line.empty() && line[line.size() - 1] == '\r')
-            line.erase(line.size() - 1);  // Eliminar '\r' si está presente
+            line.erase(line.size() - 1); 
         // Find headers end
         if (line.empty())
             break;
@@ -171,9 +171,12 @@ void HTTPRequest::parse(const std::string& request)
             throw std::runtime_error("Content-Type format is not valid");
         if (fieldFound[CONTENT_LENGTH])
         {
+            // Clean errno to detect overflow errors
+            errno = 0;
             length = strtoul(fieldValues[CONTENT_LENGTH].c_str(), &end, 10);
-            if (*end != '\0')
-                throw std::runtime_error("Conversion error: Content-Length is not a valid number");
+            // If end does not point to the end of the string or if an overflow is detected
+            if (*end != '\0' || errno == ERANGE)
+                throw std::runtime_error("Conversion error: Content-Length is not a valid number or out of range");
             // Read body
             std::string bodyTemp;
             std::getline(iss, bodyTemp);
@@ -186,34 +189,55 @@ void HTTPRequest::parse(const std::string& request)
         }
         else if (fieldFound[TRANSFER_ENCODING] && fieldValues[TRANSFER_ENCODING] == "chunked")
         {
+            // Implementar el tratamiento del cuerpo de la petición HTTP cuando se utiliza la codificación de transferencia "chunked"
+            // Read and process chunks
+            // Checks chunks lengths against HTTP request leghts
+            // Last chunk lenght must be 0
+            // Checks If any of the lengths is not a number o there is an overflow 
             while (std::getline(iss, line))
             {
-                // If \r is present it is erased
+                // If '\r' is present it is erased
                 if (!line.empty() && line[line.size() - 1] == '\r')
                     line.erase(line.size() - 1);
+                // errno is cleaned to detect overflow errors
+                errno = 0;
                 length = strtoul(line.c_str(), &end, 16);
-                if (*end != '\0')
-                    throw std::runtime_error("Chunk size conversion error");
+                if (*end != '\0' || errno == ERANGE)
+                    // if end doesn't points to string end or there is an overflow an exception is thrown
+                    throw std::runtime_error("Conversion error: Chunk length is not a valid number or out of range");
+                // If length is 0 the loop is broken (end of body)
                 if (length == 0)
-                {
-                    std::getline(iss, line);
-                    // If \r is present it is erased
-                    if (!line.empty() && line[line.size() - 1] == '\r')
-                        line.erase(line.size() - 1);  // Eliminar '\r' si está presente
                     break;
+                 // Read chunk
+                std::string chunk;
+                std::getline(iss, chunk);
+                // if '\r' is present it is erased 
+                if (!chunk.empty() && chunk[chunk.size() - 1] == '\r')
+                    chunk.erase(chunk.size() - 1);
+                // Comparison between chunk real length and HTTP request length
+                if (chunk.size() != length)
+                {
+                    // If both lenghts are not equal an exception is thrown
+                    if (chunk.size() > length)
+                        throw std::runtime_error("Chunk length is less than the real length");
+                    else
+                        throw std::runtime_error("Chunk length is greater than the real length");
                 }
-                std::string chunk(length, '\0');
-                iss.read(&chunk[0], (std::streamsize)length);
+                // Add chunk to body
                 bodyStream << chunk;
-                // Ignore \n after chunk
-                iss.ignore(1);
             }
+            // If last chunk length is not 0 an exception is thrown
+            if (length != 0)
+                throw std::runtime_error("Last chunk length is not 0");
+            // Body is added
             setField(BODY, bodyStream.str());
-            if (fieldValues[BODY].empty())
-                throw std::runtime_error("Transfer-Encoding mismatch: body is empty for chunked encoding");
         }
+        // If Transfer-Encoding is not chunked an exception is thrown
+        else
+            throw std::runtime_error("Transfer-Encoding format is not valid");
     }
 }
+
 // Get field value
 std::string HTTPRequest::getField(FieldType field) const
 {
