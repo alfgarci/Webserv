@@ -20,7 +20,7 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic
 NAME = webserv
 
 # Archivos fuente
-SRCS = main.cpp HTTPRequestParse.cpp
+SRCS = main.cpp HTTPRequestCreator.cpp
 
 # Archivos objeto generados a partir de los archivos fuente
 OBJS = ${SRCS:.cpp=.o}
