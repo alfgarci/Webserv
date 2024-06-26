@@ -15,6 +15,7 @@ void	test_collection(void)
 	t.test_check_for_assignment_token(test_number);
 	t.test_check_for_keyword_in_line(test_number);
 	t.test_check_syntax(test_number);
+	t.test_check_for_keyword(test_number);
 	cout << endl << "TEST IS_FUNS" << endl;
 	cout << "----------------------------------" << endl;
 	t.test_is_char_in_keyword_set(test_number);

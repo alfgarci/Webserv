@@ -1,5 +1,11 @@
 #include "../ServerInfo.hpp"
 
+/*
+@brief Check if the syntax is correct for the selected line
+@param s the line to check
+@param indentation_level the level of indentation
+@param line the line number in the file, for throw purpose
+*/
 void	ServerInfo::check_syntax(string s, int indentation_level, int line)
 {
 	if (!s.empty())

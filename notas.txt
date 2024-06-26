@@ -16,3 +16,8 @@ Server
 		-default_file_to_answer_dir:
 		-CGI:
 }
+
+Falta:
+-Alocar o no memoria
+-Checkear los parametros obligatorios
+-Terminar de pegar las funciones restantes

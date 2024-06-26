@@ -127,6 +127,23 @@ void	tester::test_check_syntax(int &test_number)
 	else
 		cout << GREEN << TEST_PASSED;
 	cout << RESET << test_number << endl;
-	fs.close();
 	test_number++;
+	//-------------------------------TEST
+	flag = false;
+	std::getline(fs, str);
+	try
+	{
+		check_syntax(str, route_level, ++line);
+	}
+	catch(const std::exception& e)
+	{
+		flag = true;
+	}
+	if (flag)
+		cout << RED << TEST_FAILED;
+	else
+		cout << GREEN << TEST_PASSED;
+	cout << RESET << test_number << endl;
+	test_number++;
+	fs.close();
 }

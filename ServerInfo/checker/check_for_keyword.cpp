@@ -1,12 +1,12 @@
 #include "../ServerInfo.hpp"
 
 /*
-@brief Check if the line contain a keyword
+@brief Check if the line contain a certain keyword
 @param s the line to be checked
-@param indentation_level check the level of indentation
+@param keyword the keyword to check
 @return True if it contains any keyword, False if not 
 */
-bool	ServerInfo::check_for_keyword_in_line(string s, int indentation_level)
+bool	ServerInfo::check_for_keyword(string s, string keyword)
 {
 	string::iterator	it_start_of_keyword;
 	string::iterator	it_end_of_keyword;
@@ -18,7 +18,7 @@ bool	ServerInfo::check_for_keyword_in_line(string s, int indentation_level)
 
 	string				tmp_keyword(it_start_of_keyword, it_end_of_keyword);
 
-	if (is_keyword_in_set(tmp_keyword, Indentaton_dictionary.at(indentation_level)))
+	if (tmp_keyword == keyword)
 		return (true);
 	return (false);
 }

@@ -39,6 +39,7 @@ check_indentation_level \
 check_for_indentation_token \
 check_for_assignment_token \
 check_for_keyword_in_line \
+check_for_keyword \
 check_syntax \
 pass_tabulations \
 pass_keyword_set_chars \
@@ -55,11 +56,19 @@ SERVER_INFO_IS_FUNS_DIR = is_funs/
 SERVER_INFO_IS_FUNS_SRCS = \
 $(addprefix $(SERVER_INFO_IS_FUNS_DIR), $(addsuffix .cpp, $(SERVER_INFO_IS_FUNS)))
 
+SERVER_INFO_STORE = \
+store_file \
+
+SERVER_INFO_STORE_DIR = store/
+SERVER_INFO_STORE_SRCS = \
+$(addprefix $(SERVER_INFO_STORE_DIR), $(addsuffix .cpp, $(SERVER_INFO_STORE)))
+
 
 SERVER_INFO_SRCS = \
 	$(SERVER_INFO_SRCS_CLASS) \
 	$(SERVER_INFO_CHECKER_SRCS) \
 	$(SERVER_INFO_IS_FUNS_SRCS) \
+	$(SERVER_INFO_STORE_SRCS) \
 
 #-------------------------------------------------------------------TESTER
 
@@ -74,6 +83,7 @@ test_check_indentation_level \
 test_check_for_indentation_token \
 test_check_for_assignment_token \
 test_check_for_keyword_in_line \
+test_check_for_keyword \
 test_check_syntax
 
 TESTER_CHECKER_DIR = test_checker/

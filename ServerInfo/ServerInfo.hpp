@@ -35,6 +35,7 @@ using std::cerr;
 access to the file, and that it exist, thanks ^^"
 # define BAD_SYNTAX "Bad syntax at line: "
 # define BAD_INDENTATION "Bad indentation at line: "
+# define ERROR_NOT_ENOUGH_MEMORY "Memory reserve, fail, exiting"
 
 class ServerInfo
 {
@@ -56,6 +57,7 @@ class ServerInfo
 		static bool check_for_indentation_token(string s);
 		static bool	check_for_assignment_token(string s);
 		static bool check_for_keyword_in_line(string s, int indentation_level);
+		static bool	check_for_keyword(string s, string keyword);
 		static void	check_syntax(string s, int indentation_level, int line);
 
 		//IS_FUNS
@@ -67,9 +69,13 @@ class ServerInfo
 		//STORE
 		//-------------------------------------------------------
 
-		static void				store_server(std::fstream &file);
-		static void				store_route(std::fstream &file);
+		static void				store_server(string s, t_server *server_struct);
+		static void				store_route(string s, t_server *server_struct);
 		static list<t_server>	store_file(string route);
+		static t_server			*create_server();
+		static t_route			*create_route();
+		static void				free_reserved_space_for_structs();
+		static string			get_line_content(string line);
 
 		//-------------------------------------------------------
 
