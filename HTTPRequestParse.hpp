@@ -1,22 +1,43 @@
-// HTTPRequest.hpp
+// HTTPRequestParse.hpp
 
 #ifndef HTTP_REQUEST_HPP
 #define HTTP_REQUEST_HPP
 
-// Files included
+// Files included 
 #include <algorithm>
-#include <cctype>
 #include <cerrno>
-#include <cstdio>
-#include <cstring>
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <stdexcept>
-#include <vector>
 
-// HTTPRequest class
-class HTTPRequest
+const char COLON = ':';
+const char CR = '\r';
+const char HYPHEN = '-';
+const char LINE_END = '\0';
+const char POINT = '.';
+const char SLASH = '/';
+const char SPACE = ' ';
+const char UNDERSCORE = '_';
+const int DEC_MODE = 10;
+const int HEX_MODE = 16;
+const int HTTP_LENGTH = 5;
+const int LOWER_PORT_LIMIT = 0;
+const int UPPER_PORT_LIMIT = 65535;
+const std::string CHUNKED_MODE = "chunked";
+const std::string KEEP_ALIVE_MODE = "keep-alive";
+const std::string CONNECTION_FIELD = "connection:";
+const std::string CONTENT_LENGTH_FIELD = "content-length:";
+const std::string CONTENT_TYPE_FIELD = "content-type:";
+const std::string DEFAULT_PORT = "80";
+const std::string HOST_FIELD = "host:";
+const std::string HTTP = "HTTP/";
+const std::string METHOD_DEL = "DELETE";
+const std::string METHOD_GET = "GET";
+const std::string METHOD_POS = "POST";
+const std::string TRANSFER_ENCODING_FIELD = "transfer-encoding:";
+const std::string VERSION = "1.1";
+
+class HTTPRequestParse
 {
     public:
         enum FieldType
@@ -29,17 +50,18 @@ class HTTPRequest
             CONTENT_LENGTH,
             CONTENT_TYPE,
             TRANSFER_ENCODING,
-            BODY
+            BODY,
+            PORT
         };
         // Constructors
-        HTTPRequest(void);
-        explicit HTTPRequest(const std::string& request);
+        HTTPRequestParse(void);
+        explicit HTTPRequestParse(const std::string& request);
         // Destructor
-        ~HTTPRequest();
+        ~HTTPRequestParse();
         // Copy constructor
-        HTTPRequest(const HTTPRequest &httpRequest);
+        HTTPRequestParse(const HTTPRequestParse &HTTPRequestParse);
         // Assignation operator
-        HTTPRequest &operator=(HTTPRequest const &httpRequest);
+        HTTPRequestParse &operator=(HTTPRequestParse const &HTTPRequestParse);
         // Function to check HTTP request
         void parse(const std::string& request);
         // Get field value
