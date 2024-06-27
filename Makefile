@@ -58,6 +58,12 @@ $(addprefix $(SERVER_INFO_IS_FUNS_DIR), $(addsuffix .cpp, $(SERVER_INFO_IS_FUNS)
 
 SERVER_INFO_STORE = \
 store_file \
+store_server \
+store_route \
+initiate_route \
+initiate_server \
+get_line_content \
+
 
 SERVER_INFO_STORE_DIR = store/
 SERVER_INFO_STORE_SRCS = \

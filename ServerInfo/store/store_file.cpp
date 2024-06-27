@@ -47,17 +47,20 @@ static void enforce_syntax(string path)
 	file.close();
 }
 
-static void start_store_file (std::fstream &file, int &indentation_level, t_server **server, string path)
+static void start_store_file (std::fstream &file, int &indentation_level, string path)
 {
 	indentation_level = base_level;
-	server = NULL;
 	file.open(path.c_str(), std::fstream::in);
 	if (!file.is_open())
 		throw std::logic_error(ERROR_CANT_OPEN_FILE);
 	enforce_syntax(path);
 }
 
-static void select_store_method(t_server *server_struct, int indentation_level, string s)
+/*
+IMPORTANT NOTE, here i use the lst_server.front() to acces the first server struct
+order the servers, in order of NEWER --> OLDER in the lst, bear that in mind.
+*/
+static void select_store_method(list<t_server> &lst_server, int indentation_level, string s)
 {
 	if
 	(
@@ -70,13 +73,13 @@ static void select_store_method(t_server *server_struct, int indentation_level, 
 		indentation_level == server_level
 		&& ServerInfo::check_for_keyword(s, Server_dictionary.at(route))
 	)
-		server_struct->routes.push_front(ServerInfo::create_route());
+		lst_server.front().routes.push_front(ServerInfo::initiate_route());
 	if (indentation_level == base_level)
-		server_struct = ServerInfo::create_server();
+		lst_server.push_front(ServerInfo::initiate_server());
 	if (indentation_level == server_level)
-		ServerInfo::store_server(s, server_struct);
+		ServerInfo::store_server(s, lst_server.front());
 	if (indentation_level == route_level)
-		ServerInfo::store_route(s, server_struct);
+		ServerInfo::store_route(s, lst_server.front());
 }
 
 /*
@@ -88,19 +91,18 @@ the requirements fail, if the file dosent compliy, etc
 list<t_server>	ServerInfo::store_file(string path)
 {
 	list<t_server>		lst_server;
-	t_server			*server_struct;
 	std::fstream		file;
 	string				s;
 	int					indentation_level;
 
-	start_store_file(file, indentation_level, &server_struct, path);
+	start_store_file(file, indentation_level, path);
 	while (std::getline(file, s))
 	{
 		if (!s.empty())
-			select_store_method(server_struct, indentation_level, s);
+			select_store_method(lst_server, indentation_level, s);
 		change_indenation_level(indentation_level, s);
 	}
 	file.close();
-	lst_server.front().
+	lst_server.front();
 	return (lst_server);
 }
