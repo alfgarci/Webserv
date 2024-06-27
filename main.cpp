@@ -25,4 +25,13 @@ void	test_collection(void)
 int	main(void)
 {
 	test_collection();
+	try
+	{
+		list<t_server> s = ServerInfo::store_file("tester/test_files/right_file.test");
+		ServerInfo::print_t_server(s.front());
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 }

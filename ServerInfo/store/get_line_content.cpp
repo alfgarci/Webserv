@@ -14,6 +14,7 @@ string	ServerInfo::get_line_content(string line)
 	{
 		it++;
 	}
+	it++;
 
 	string				result(it, line.end());
 

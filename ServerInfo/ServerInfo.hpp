@@ -94,6 +94,7 @@ class ServerInfo
 		static string			get_line_content(string line);
 
 		//-------------------------------------------------------
+		static void	print_t_server(t_server	&serv);
 
 	protected:
 		bool	_do_log;

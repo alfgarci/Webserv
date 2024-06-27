@@ -31,7 +31,7 @@ static void enforce_syntax(string path)
 	int				indentation_level;
 	string			s;
 
-	line = 0;
+	line = 1;
 	indentation_level = base_level;
 	file.open(path.c_str(), std::fstream::in);
 	if (!file.is_open())
@@ -40,8 +40,7 @@ static void enforce_syntax(string path)
 	{
 		if (!s.empty())
 			ServerInfo::check_syntax(s, indentation_level, line);
-		else
-			change_indenation_level(indentation_level, s);
+		change_indenation_level(indentation_level, s);
 		line++;
 	}
 	file.close();
@@ -67,15 +66,13 @@ static void select_store_method(list<t_server> &lst_server, int indentation_leve
 		indentation_level == base_level
 		&& ServerInfo::check_for_keyword(s, Base_dictionary.at(server))
 	)
-		return ;
+		lst_server.push_front(ServerInfo::initiate_server());
 	if
 	(
 		indentation_level == server_level
 		&& ServerInfo::check_for_keyword(s, Server_dictionary.at(route))
 	)
 		lst_server.front().routes.push_front(ServerInfo::initiate_route());
-	if (indentation_level == base_level)
-		lst_server.push_front(ServerInfo::initiate_server());
 	if (indentation_level == server_level)
 		ServerInfo::store_server(s, lst_server.front());
 	if (indentation_level == route_level)
