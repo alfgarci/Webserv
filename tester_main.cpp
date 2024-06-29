@@ -1,6 +1,8 @@
-#include "HTTPRequestParse.hpp"
+#include "HTTPRequestParse/HTTPRequestParse.hpp"
+#include "ServerInfo/ServerInfo.hpp"
+#include "tester/tester.hpp"
 
-int main(int argc, char *argv[])
+int test_HttpRequestParser(int argc, char *argv[])
 {
     if (argc != 2)
     {
@@ -41,3 +43,45 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+void	test_ServerInfo(void)
+{
+	tester	t;
+	int		test_number;
+
+	test_number = 1;
+	cout << "TEST_CHECKER" << endl;
+	cout << "----------------------------------" << endl;
+	t.test_check_indentation(test_number);
+	t.test_check_indentation_level(test_number);
+	t.test_check_for_indentation_token(test_number);
+	t.test_check_for_assignment_token(test_number);
+	t.test_check_for_keyword_in_line(test_number);
+	t.test_check_syntax(test_number);
+	t.test_check_for_keyword(test_number);
+	cout << endl << "TEST IS_FUNS" << endl;
+	cout << "----------------------------------" << endl;
+	t.test_is_char_in_keyword_set(test_number);
+	t.test_is_keyword_in_set(test_number);
+}
+
+# define RUN_TEST_INFO 0
+# define RUN_TEST_HTTPRREQUESTPARSE 0
+
+int	main(int argc, char **argv)
+{
+	if (RUN_TEST_HTTPRREQUESTPARSE)
+		test_HttpRequestParser(argc, argv);
+	if (RUN_TEST_INFO)
+	{
+		test_ServerInfo();
+		try
+		{
+			list<t_server> s = ServerInfo::store_file("tester/test_files/right_file.test");
+			ServerInfo::print_t_server(s.front());
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+	}
+}

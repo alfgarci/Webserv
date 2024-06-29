@@ -1,0 +1,24 @@
+
+
+
+
+
+
+
+
+
+server:
+	port=10
+	host=4
+	port=41
+	server_name=HOLA
+	body_limit=104801
+	route:
+		accepted_http_methods=DUMP
+		CGI=HOLA
+		default_file=MANOLO
+		http_redirections=PACO
+		search_dir=NOPE
+		dir_listen=true
+		accepted_http_methods=DUMP
+
