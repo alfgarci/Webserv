@@ -5,7 +5,6 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -std=c++98
 RM = rm -f
 DEFINES = -D RUN_TEST=0
 
-
 RED =   \033[0;31m
 GREEN = \033[0;32m
 YELLOW =    \033[0;33m
@@ -120,11 +119,24 @@ HTTPREQUESTPARSE_SRCS_CLASS = $(addsuffix .cpp, $(HTTPREQUESTPARSE_CLASS))
 HTTPREQUESTPARSE_SRCS = \
 	$(HTTPREQUESTPARSE_SRCS_CLASS) \
 
+
+#-------------------------------------------------------------------HTTPREQUESTCREATOR
+
+
+HTTPREQUESTCREATOR_DIR = HTTPRequestCreator
+
+HTTPREQUESTCREATOR_CLASS = HTTPRequestCreator
+HTTPREQUESTCREATOR_SRCS_CLASS = $(addsuffix .cpp, $(HTTPREQUESTCREATOR_CLASS))
+
+HTTPREQUESTCREATOR_SRCS = \
+	$(HTTPREQUESTCREATOR_SRCS_CLASS) \
+
 #-------------------------------------------------------------------SRCS
 
 SRCS =	\
 		$(addprefix $(SERVER_INFO_DIR)/, $(SERVER_INFO_SRCS)) \
 		$(addprefix $(HTTPREQUESTPARSE_DIR)/, $(HTTPREQUESTPARSE_SRCS)) \
+		$(addprefix $(HTTPREQUESTCREATOR_DIR)/, $(HTTPREQUESTCREATOR_SRCS)) \
 		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
 		$(addsuffix .cpp, $(MAIN)) \
 

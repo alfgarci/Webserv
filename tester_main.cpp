@@ -1,6 +1,24 @@
 #include "HTTPRequestParse/HTTPRequestParse.hpp"
 #include "ServerInfo/ServerInfo.hpp"
 #include "tester/tester.hpp"
+#include "HTTPRequestCreator/HTTPRequestCreator.hpp"
+
+int test_creator()
+{
+    HTTPRequestCreator requestCreator;
+    std::string request = requestCreator.createHTTPRequest("GET", "www.google.com", "/", "", 80);
+    std::cout << request << std::endl;
+    request = requestCreator.createHTTPRequest("POST", "www.google.com", "/", "Hello World", 433);
+    std::cout << request << std::endl;
+    std::string chunk1 = "4\r\nHola\r\n";
+    std::string chunk2 = "5\r\nMundo\r\n";
+    std::string body = chunk1 + chunk2;
+    request = requestCreator.createHTTPRequest("POST", "www.google.com", "/", body, 180, true);
+    std::cout << request << std::endl;
+    request = requestCreator.createHTTPRequest("DELETE", "www.google.com", "/", "", 0);
+    std::cout << request << std::endl;
+    return (0);
+}
 
 int test_HttpRequestParser(int argc, char *argv[])
 {
@@ -66,9 +84,12 @@ void	test_ServerInfo(void)
 
 # define RUN_TEST_INFO 0
 # define RUN_TEST_HTTPRREQUESTPARSE 0
+# define RUN_TEST_HTTPRREQUESTCREATOR 0
 
 int	main(int argc, char **argv)
 {
+	if (RUN_TEST_HTTPRREQUESTCREATOR)
+		test_creator();
 	if (RUN_TEST_HTTPRREQUESTPARSE)
 		test_HttpRequestParser(argc, argv);
 	if (RUN_TEST_INFO)
