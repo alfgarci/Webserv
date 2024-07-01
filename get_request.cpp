@@ -1,7 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <sys/socket.h>
+#include "HTTPRequestParse.hpp"
+
+using std::string;
+using std::stringstream;
 
 // Server configuration
 #define EXPECTED_HOST "www.example.com"
@@ -26,7 +29,7 @@
 
 
 // Function to handle the GET request
-void get_request(int socket_id, const std::string &path, const std::string &host, const std::string port)
+void get_request(int socket_id, HTTPRequestParse request)
 {   
 	// Variable to store file data
 	void *content;
@@ -37,7 +40,11 @@ void get_request(int socket_id, const std::string &path, const std::string &host
 	// Items read from the file
 	size_t itemsRead;
 	// Message
-	std::stringstream message;
+	stringstream message;
+
+	string host = request.getField(HTTPRequestParse::HOST);
+	string path = request.getField(HTTPRequestParse::PATH);
+	string port = request.getField(HTTPRequestParse::PORT);
 
 	// Check if host and port are valid
 	if (host != EXPECTED_HOST)
