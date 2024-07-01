@@ -3,8 +3,9 @@
 // Included files
 #include "HTTPRequestCreator.hpp"
 
-# define SPACE " "
-# define COLON ":"
+#define COLON ":"
+#define SPACE " "
+
 // Default constructor
 HTTPRequestCreator::HTTPRequestCreator()
 {
@@ -29,39 +30,40 @@ HTTPRequestCreator& HTTPRequestCreator::operator=(const HTTPRequestCreator& othe
     return (*this);
 }
 
-std::string HTTPRequestCreator::createHTTPRequest(const std::string& method, const std::string& host, const std::string& path, const std::string& body, unsigned short port, bool useChunked)
+string HTTPRequestCreator::createHTTPRequest(const string& method, const string& host, const string& path, const string& body, unsigned short port, bool useChunked)
 {
-    std::string request;
-    std::ostringstream oss;
+    string request;
+    ostringstream oss;
 
     // Add method and path
     request += method + SPACE + path + HTTP_1_1 + CRLF;
     // Add host and port
     oss << port;
-    request += HOST_LABEL + SPACE + host + COLON + oss.str() + CRLF;
+    request += HOST_LABEL + host + COLON + oss.str() + CRLF;
      // Add Connection field
-    request += CONNECTION + CRLF;
+    request += CONNECTION;
     if (method == METHOD_POST)
     {
         // Transfer-Encoding: chunked for POST if useChunked is true
         if (useChunked)
         {
             // Add Transfer-Encoding label. chunked para POST si useChunked es true
-            request += TRANSFER_LABEL + CRLF + CRLF;
+            request += TRANSFER_LABEL;
             // Chunks start
             request += body;
             // Chunks end
-            request += "0" + CRLF + CRLF;
+            request += LENGTH_ZERO;
         }
         // Content-Length for POST if useChunked is false
         else
         {
             // Clear the string stream
-            oss.str("");
+            oss.str(EMPTY);
             oss.clear();
             // Add Content-Length and body
             oss << body.length();
-            request += CONTENT_LABEL + SPACE + oss.str() + CRLF + CRLF; request += body;
+            request += CONTENT_LABEL + oss.str() + CRLF + CRLF;
+            request += body;
         }
     }
     // If method is GET or DELETE, just add CRLF
