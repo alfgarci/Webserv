@@ -3,7 +3,9 @@
 // Included files
 #include "HTTPRequestCreator.hpp"
 
+// Macros
 #define COLON ":"
+#define CONNECTION "Connection: keep-alive\r\n"
 #define SPACE " "
 
 // Default constructor

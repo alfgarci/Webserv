@@ -10,7 +10,6 @@ using std::string;
 #ifndef HTTP_REQUEST_CREATOR_HPP
 #define HTTP_REQUEST_CREATOR_HPP
 
-#define CONNECTION "Connection: keep-alive\r\n"
 #define CONTENT_LABEL "Content-Length: " 
 #define CRLF "\r\n"
 #define EMPTY ""
