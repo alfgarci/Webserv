@@ -9,7 +9,8 @@ using std::string;
 
 #ifndef HTTP_REQUEST_CREATOR_HPP
 #define HTTP_REQUEST_CREATOR_HPP
-
+#define COLON ':'
+#define CONNECTION_LABEL_VALUE "Connection: keep-alive\r\n"
 #define CONTENT_LABEL "Content-Length: " 
 #define CRLF "\r\n"
 #define EMPTY ""
@@ -17,6 +18,7 @@ using std::string;
 #define HTTP_1_1 "HTTP/1.1"
 #define LENGTH_ZERO "0\r\n\r\n"
 #define METHOD_POST "POST"
+#define SPACE ' '
 #define TRANSFER_LABEL "Transfer-Encoding: chunked\r\n\r\n"
 
 class HTTPRequestCreator

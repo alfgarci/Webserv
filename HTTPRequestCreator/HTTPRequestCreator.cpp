@@ -3,11 +3,6 @@
 // Included files
 #include "HTTPRequestCreator.hpp"
 
-// Macros
-#define COLON ":"
-#define CONNECTION "Connection: keep-alive\r\n"
-#define SPACE " "
-
 // Default constructor
 HTTPRequestCreator::HTTPRequestCreator()
 {
@@ -43,7 +38,7 @@ string HTTPRequestCreator::createHTTPRequest(const string& method, const string&
     oss << port;
     request += HOST_LABEL + host + COLON + oss.str() + CRLF;
      // Add Connection field
-    request += CONNECTION;
+    request += CONNECTION_LABEL_VALUE;
     if (method == METHOD_POST)
     {
         // Transfer-Encoding: chunked for POST if useChunked is true
