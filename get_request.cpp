@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include "HTTPRequestParse.hpp"
 
+using std::cerr;
 using std::string;
 using std::stringstream;
 
@@ -15,6 +16,7 @@ using std::stringstream;
 #define OK "HTTP/1.1 200 OK\n\n"
 
 // Error messages
+#define FILE_CLOSE_ERROR "HTTP/1.1 500 Internal Server Error. Error: File close failed\n\n"
 #define FILE_NOT_FOUND "HTTP/1.1 404 Not Found\n\n"
 #define INTERNAL_SERVER_ERROR "HTTP/1.1 500 Internal Server Error\n\n"
 #define NOT_VALID_HOST "HTTP/1.1 400 Bad Request. Error: Not valid host\n\n"
@@ -41,6 +43,9 @@ void get_request(int socket_id, HTTPRequestParse request)
 	size_t itemsRead;
 	// Message
 	stringstream message;
+	// Bytes sent
+	ssize_t bytes_sent;
+
 
 	string host = request.getField(HTTPRequestParse::HOST);
 	string path = request.getField(HTTPRequestParse::PATH);
@@ -107,7 +112,11 @@ void get_request(int socket_id, HTTPRequestParse request)
 				message << INTERNAL_SERVER_ERROR;
 			}
 			// Close the file
-			fclose(file);
+			if (fclose(file) != 0)
+			{
+			    message.str(EMPTY);
+   				 message << FILE_CLOSE_ERROR;
+			}
 		}
 		// If file not found
 		else
@@ -119,5 +128,11 @@ void get_request(int socket_id, HTTPRequestParse request)
 		}
 	}	
 	// Send the message
-	send(socket_id, message.str().c_str(), message.str().size(), 0);
+	bytes_sent = send(socket_id, message.str().c_str(), message.str().size(), 0);
+
+	// Check if send failed
+    if (bytes_sent == -1)
+        // Handle the error message
+        cerr << "Error sending message to client." << endl;
+	// ¿habría que cerrar el socket?
 }

@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include "HTTPRequestParse.hpp"
 
+using std::cerr;
 using std::string;
 using std::stringstream;
 
@@ -15,6 +16,7 @@ using std::stringstream;
 #define OK "HTTP/1.1 200 OK\n\n"
 
 // Error messages
+#define FILE_CLOSE_ERROR "HTTP/1.1 500 Internal Server Error. Error: File close failed\n\n"
 #define FILE_OPEN_ERROR "HTTP/1.1 500 Internal Server Error. Fail opening file\n\n"
 #define FILE_WRITE_ERROR "HTTP/1.1 500 Internal Server Error\n\nFail Writing file\n\n"
 #define INTERNAL_SERVER_ERROR "HTTP/1.1 500 Internal Server Error\n\n"
@@ -37,6 +39,8 @@ void post_request(int socket_id, HTTPRequestParse request)
 	size_t itemsWritten;
 	// Message
 	stringstream message;
+    // Bytes sent
+	ssize_t bytes_sent;
 
     string host = request.getField(HTTPRequestParse::HOST);
 	string path = request.getField(HTTPRequestParse::PATH);
@@ -65,9 +69,14 @@ void post_request(int socket_id, HTTPRequestParse request)
             else
             {
                 // Close the file
-                fclose(file);
-                // Prepare the message
-                message << OK << "Data processed successfully.\n";
+    			if (fclose(file) != 0)
+	    		{
+		    	    message.str(EMPTY);
+   			    	message << FILE_CLOSE_ERROR;
+			    }
+                else
+                    // Prepare the message
+                    message << OK << "Data processed successfully.\n";
             }
         }
     }
