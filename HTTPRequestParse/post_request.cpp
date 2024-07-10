@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <sys/socket.h>
@@ -33,8 +34,6 @@ void post_request(int socket_id, HTTPRequestParse request)
 {
 	// File to be open
 	FILE *file;
-	// Length of the file
-	size_t length;
 	// Items read from the file
 	size_t itemsWritten;
 	// Message
@@ -81,5 +80,11 @@ void post_request(int socket_id, HTTPRequestParse request)
         }
     }
     // Send the message
-    send(socket_id, message.str().c_str(), message.str().size(), 0);
+	bytes_sent = send(socket_id, message.str().c_str(), message.str().size(), 0);
+
+	// Check if send failed
+    if (bytes_sent == -1)
+        // Handle the error message
+        cerr << "Error sending message to client." << endl;
+	// ¿habría que cerrar el socket?
 }
