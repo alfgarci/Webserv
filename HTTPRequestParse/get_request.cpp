@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <sys/socket.h>
+#include <unistd.h>
 #include "HTTPRequestParse.hpp"
 
 using std::cerr;
@@ -24,6 +25,10 @@ using std::stringstream;
 #define PARTIAL_READ_ERROR "HTTP/1.1 500 Internal Server Error. Error: Partial file read\n\n"
 #define READ_FILE_ERROR "HTTP/1.1 500 Internal Server Error. Error: Reading file\n\n"
 #define WRONG_PORT "HTTP/1.1 400 Bad Request. Wrong Port: "
+#define PATH_VALIDATION_ERROR "HTTP/1.1 400 Bad Request. Error: Invalid Path\n\n"
+#define SEND_ERROR "HTTP/1.1 500 Internal Server Error. Error sending message. Attempt: "
+#define FINAL_SEND_ERROR "HTTP/1.1 500 Internal Server Error. Failed to send message after final attempt.\n\n"
+#define SOCKET_CLOSING_ERROR "Error closing socket\n\n"
 
 // Other definitions
 #define READ_BINARY "rb"
@@ -46,14 +51,23 @@ void get_request(int socket_id, HTTPRequestParse request)
 	stringstream message;
 	// Bytes sent
 	ssize_t bytes_sent;
+	// Send attempts
+    int send_attempts;
+    // Max send attempts
+    const int MAX_SEND_ATTEMPTS = 3;
+
+    send_attempts = 0;
 
 
 	string host = request.getField(HTTPRequestParse::HOST);
 	string path = request.getField(HTTPRequestParse::PATH);
 	string port = request.getField(HTTPRequestParse::PORT);
 
+	// Validación básica del path
+    if (path.find("..") != string::npos)
+        message << PATH_VALIDATION_ERROR;
 	// Check if host and port are valid
-	if (host != EXPECTED_HOST)
+	else if (host != EXPECTED_HOST)
 		message << NOT_VALID_HOST;
 	else if (port != EXPECTED_PORT)
 		message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
@@ -128,12 +142,21 @@ void get_request(int socket_id, HTTPRequestParse request)
 			message << FILE_NOT_FOUND;
 		}
 	}	
-	// Send the message
-	bytes_sent = send(socket_id, message.str().c_str(), message.str().size(), 0);
+    do
+    {
+        bytes_sent = send(socket_id, message.str().c_str(), message.str().size(), 0);
+        if (bytes_sent == -1) {
+            cerr << SEND_ERROR << send_attempts + 1 << "\n\n" << endl;
+            send_attempts++;
+            // Wait 1 second before trying again
+            sleep(1);
+        }
+    } while (bytes_sent == -1 && send_attempts < MAX_SEND_ATTEMPTS);
 
-	// Check if send failed
+    // After the loop, check if the message was sent
     if (bytes_sent == -1)
-        // Handle the error message
-        cerr << "Error sending message to client." << endl;
-	// ¿habría que cerrar el socket?
+        cerr << FINAL_SEND_ERROR << endl;
+    // Close the socket
+    if (close(socket_id) != 0)
+        cerr << SOCKET_CLOSING_ERROR << endl;
 }
