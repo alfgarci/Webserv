@@ -1,9 +1,9 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
-#include <sys/socket.h>
 #include <unistd.h>
 #include "HTTPRequestParse.hpp"
+#include "send_cgi_handle.hpp"
 
 using std::cerr;
 using std::string;
@@ -12,6 +12,7 @@ using std::stringstream;
 // Server configuration
 #define EXPECTED_HOST "www.example.com"
 #define EXPECTED_PORT "80"
+#define CGI_DIR "/path/to/cgi-bin/" // Asegúrate de que esta definición coincida con la de cgi_handle.hpp
 
 // Normal functioning messages
 #define CONNECTION "Connection: keep-alive\n\n"
@@ -38,77 +39,59 @@ using std::stringstream;
 // Function to handle the POST request
 void post_request(int socket_id, HTTPRequestParse request)
 {
-	// File to be open
-	FILE *file;
-	// Items read from the file
-	size_t itemsWritten;
-	// Message
-	stringstream message;
-    // Bytes sent
-	ssize_t bytes_sent;
-    // Send attempts
-    int send_attempts;
-    // Max send attempts
+    FILE *file;
+    size_t itemsWritten;
+    stringstream message;
+    ssize_t bytes_sent;
+    int send_attempts = 0;
     const int MAX_SEND_ATTEMPTS = 3;
-
-    send_attempts = 0;
     file = nullptr;
     string host = request.getField(HTTPRequestParse::HOST);
-	string path = request.getField(HTTPRequestParse::PATH);
-	string port = request.getField(HTTPRequestParse::PORT);
+    string path = request.getField(HTTPRequestParse::PATH);
+    string port = request.getField(HTTPRequestParse::PORT);
     string body = request.getField(HTTPRequestParse::BODY);
+
+    // Intenta manejar la solicitud como CGI si el path es correcto
+    if (path.find(CGI_DIR) == 0)
+    {
+        if (handle_cgi_request(path, body, message)) {
+            // La solicitud CGI fue manejada exitosamente
+            // Envía la respuesta al cliente
+            send_response(socket_id, message.str());
+            return; // Termina el manejo de la solicitud
+        }
+        // Si el manejo de CGI falla, continúa para intentar manejar como una operación de archivo
+    }
 
     // Validación básica del path
     if (path.find("..") != string::npos)
         message << PATH_VALIDATION_ERROR;
-    // Check if host and port are valid
     else if (host != EXPECTED_HOST)
         message << NOT_VALID_HOST;
     else if (port != EXPECTED_PORT)
         message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
     else
     {
-        // Trying to open the file
-		file = fopen(path.c_str(), WRITE_BINARY);
-        // Check if the file was opened successfully
+        file = fopen(path.c_str(), WRITE_BINARY);
         if (!file)
             message << FILE_OPEN_ERROR;
         else
         {
-            // Write the body data to the file
             itemsWritten = fwrite(body.c_str(), 1, body.size(), file);
-            // Check if the file was written successfully
             if (itemsWritten != body.size())
-                message << FILE_WRITE_ERROR ;
+                message << FILE_WRITE_ERROR;
             else
             {
-                // Close the file
-    			if (fclose(file) != 0)
-	    		{
-		    	    message.str(EMPTY);
-   			    	message << FILE_CLOSE_ERROR;
-			    }
+                if (fclose(file) != 0)
+                {
+                    message.str(EMPTY);
+                    message << FILE_CLOSE_ERROR;
+                }
                 else
-                    // Prepare the message
                     message << OK << DATA_PROC;
             }
         }
     }
-    do
-    {
-        bytes_sent = send(socket_id, message.str().c_str(), message.str().size(), 0);
-        if (bytes_sent == -1) {
-            cerr << SEND_ERROR << send_attempts + 1 << "\n\n" << endl;
-            send_attempts++;
-            // Wait 1 second before trying again
-            sleep(1);
-        }
-    } while (bytes_sent == -1 && send_attempts < MAX_SEND_ATTEMPTS);
-
-    // After the loop, check if the message was sent
-    if (bytes_sent == -1)
-        cerr << FINAL_SEND_ERROR << endl;
-    // Close the socket
-    if (close(socket_id) != 0)
-        cerr << SOCKET_CLOSING_ERROR << endl;
+    // Intenta enviar la respuesta al cliente
+    send_response(socket_id, message.str());
 }
