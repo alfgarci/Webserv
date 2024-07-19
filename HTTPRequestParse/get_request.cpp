@@ -3,6 +3,8 @@
 #include <sstream>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <dirent.h> // For opendir(), readdir(), closedir()
+#include <sys/stat.h> // For stat()
 #include "HTTPRequestParse.hpp"
 
 using std::cerr;
@@ -35,128 +37,114 @@ using std::stringstream;
 #define DOUBLE_LINE_BREAK "\n\n"
 #define EMPTY ""
 
-
 // Function to handle the GET request
 void get_request(int socket_id, HTTPRequestParse request)
 {   
-	// Variable to store file data
-	void *content;
-	// File to be open
-	FILE *file;
-	// Length of the file
-	size_t length;
-	// Items read from the file
-	size_t itemsRead;
-	// Message
-	stringstream message;
-	// Bytes sent
-	ssize_t bytes_sent;
-	// Send attempts
+    // Variable to store file data
+    void *content;
+    // File to be open
+    FILE *file;
+    // Length of the file
+    size_t length;
+    // Items read from the file
+    size_t itemsRead;
+    // Message
+    stringstream message;
+    // Bytes sent
+    ssize_t bytes_sent;
+    // Send attempts
     int send_attempts;
     // Max send attempts
     const int MAX_SEND_ATTEMPTS = 3;
 
     send_attempts = 0;
 
+    string host = request.getField(HTTPRequestParse::HOST);
+    string path = request.getField(HTTPRequestParse::PATH);
+    string port = request.getField(HTTPRequestParse::PORT);
 
-	string host = request.getField(HTTPRequestParse::HOST);
-	string path = request.getField(HTTPRequestParse::PATH);
-	string port = request.getField(HTTPRequestParse::PORT);
-
-	// Validación básica del path
+    // Validación básica del path
     if (path.find("..") != string::npos)
         message << PATH_VALIDATION_ERROR;
-	// Check if host and port are valid
-	else if (host != EXPECTED_HOST)
-		message << NOT_VALID_HOST;
-	else if (port != EXPECTED_PORT)
-		message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
-	else
-	{
-		// Trying to open the file
-		file = fopen(path.c_str(), READ_BINARY);
-		// Open file
-		if (file)
-		{
-			// Message says everything is OK
-			message << OK;
-			// Connection will be always "keep-alive"
-			message << CONNECTION;
-			// Move the file pointer to the end of the file
-			fseek(file, 0, SEEK_END);
-			// Obtain the current position of the file pointer, that is the length of the file
-			length = ftell(file);
-			// Move the file pointer back to the beginning of the file
-			fseek(file, 0, SEEK_SET);
-			// Try to read file
-			content = malloc(length);
-			// If content is allocated without any error
-			if (content)
-			{
-				// Read the file
-				itemsRead = fread(content, 1, length, file);
-				if (itemsRead < length)
-				{
-					if (ferror(file))
-					{
-						// Clear the message and report a read error
-						message.str(EMPTY);
-						message << READ_FILE_ERROR;
-					}
-					else
-					{
-						// Clear the message and report a partial read error
-						message.str(EMPTY);
-						message << PARTIAL_READ_ERROR;
-					}
-				}
-				else 
-				{
-					// Correctly add binary content to the message
-					message.write(static_cast<const char*>(content), itemsRead);
-				}
-				// Free the content
-				free(content);
-			}
-			// File is not read	
-			else
-			{   
-				// Clear the message
-				message.str(EMPTY);
-				// Message says there was an internal server error   
-				message << INTERNAL_SERVER_ERROR;
-			}
-			// Close the file
-			if (fclose(file) != 0)
-			{
-			    message.str(EMPTY);
-   				 message << FILE_CLOSE_ERROR;
-			}
-		}
-		// If file not found
-		else
-		{
-			// Clear the message
-			message.str(EMPTY);
-			// Message says file not found
-			message << FILE_NOT_FOUND;
-		}
-	}	
-    do
+    // Check if host and port are valid
+    else if (host != EXPECTED_HOST)
+        message << NOT_VALID_HOST;
+    else if (port != EXPECTED_PORT)
+        message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
+    else
     {
+        struct stat path_stat;
+        stat(path.c_str(), &path_stat);
+        // Verificar si el path es un directorio
+        if (S_ISDIR(path_stat.st_mode)) {
+            DIR *dir;
+            struct dirent *ent;
+            // Abrir el directorio
+            if ((dir = opendir(path.c_str())) != NULL) {
+                // Limpiar el mensaje y empezar a construir la respuesta HTML
+                message.str(EMPTY);
+                message << OK << CONNECTION;
+                message << "<html><head><title>Index of " << path << "</title></head><body><h1>Index of " << path << "</h1><ul>";
+                // Leer los contenidos del directorio
+                while ((ent = readdir(dir)) != NULL) {
+                    message << "<li><a href=\"" << ent->d_name << "\">" << ent->d_name << "</a></li>";
+                }
+                message << "</ul></body></html>";
+                closedir(dir);
+            } else {
+                // No se pudo abrir el directorio
+                message.str(EMPTY);
+                message << FILE_NOT_FOUND;
+            }
+        } else {
+            // Intentar abrir el archivo
+            file = fopen(path.c_str(), READ_BINARY);
+            if (file) {
+                // Mensaje indica que todo está OK
+                message << OK << CONNECTION;
+                fseek(file, 0, SEEK_END);
+                length = ftell(file);
+                fseek(file, 0, SEEK_SET);
+                content = malloc(length);
+                if (content) {
+                    itemsRead = fread(content, 1, length, file);
+                    if (itemsRead < length) {
+                        if (ferror(file)) {
+                            message.str(EMPTY);
+                            message << READ_FILE_ERROR;
+                        } else {
+                            message.str(EMPTY);
+                            message << PARTIAL_READ_ERROR;
+                        }
+                    } else {
+                        message.write(static_cast<const char*>(content), itemsRead);
+                    }
+                    free(content);
+                } else {
+                    message.str(EMPTY);
+                    message << INTERNAL_SERVER_ERROR;
+                }
+                if (fclose(file) != 0) {
+                    message.str(EMPTY);
+                    message << FILE_CLOSE_ERROR;
+                }
+            } else {
+                message.str(EMPTY);
+                message << FILE_NOT_FOUND;
+            }
+        }
+    }
+    do {
         bytes_sent = send(socket_id, message.str().c_str(), message.str().size(), 0);
         if (bytes_sent == -1) {
-            cerr << SEND_ERROR << send_attempts + 1 << "\n\n" << endl;
+            cerr << SEND_ERROR << send_attempts + 1 << "\n\n";
             send_attempts++;
-            // Wait 1 second before trying again
             sleep(1);
         }
     } while (bytes_sent == -1 && send_attempts < MAX_SEND_ATTEMPTS);
 
-    // After the loop, check if the message was sent
     if (bytes_sent == -1)
-        cerr << FINAL_SEND_ERROR << endl;
-    // Close the socket
+        cerr << FINAL_SEND_ERROR;
     if (close(socket_id) != 0)
-        cerr << SOCKET_CLOSING_ERROR << endl;
+        cerr << SOCKET_CLOSING_ERROR;
 }
