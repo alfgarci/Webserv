@@ -23,20 +23,11 @@ typedef	struct	s_route
 typedef struct	s_server
 {
 	list<int>			port;
-	int					host;
-	string				name;
-	unsigned int		body_size_limit;
-	list<t_route>		routes;
-}				t_server;
-
-typedef struct	s_server2
-{
-	uint16_t			port;
 	string				host;
 	string				name;
 	unsigned int		body_size_limit;
 	list<t_route>		routes;
-}				t_server2;
+}				t_server;
 
 typedef struct	s_requirements
 {

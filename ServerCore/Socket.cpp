@@ -39,7 +39,7 @@ Socket::Socket(const std::string & ip, uint16_t port)
 {
     this->_fd = socket(this->_domain, this->_type, this->_protocol);
     if (this->_fd <= -1)
-		std::cout << "FAIL" << std::endl;
+		std::cout << "FAIL socket" << std::endl;
 
 	/* Set the socket to reuse (makes it re-bindable directly after close) */
 	int reuse_addr = true;
@@ -59,16 +59,16 @@ void Socket::bind(void)
 		return;
 	bind_status = ::bind(this->_fd, reinterpret_cast< const struct sockaddr * >(&this->_sockaddr), sizeof(this->_sockaddr));
 	if (bind_status <= -1)
-        std::cout << "FAIL" << std::endl;
+        std::cout << "FAIL bind" << std::endl;
 	this->_binded = true;
 }
 
 void Socket::listen(void)
 {
 	if (!this->_binded)
-        std::cout << "FAIL" << std::endl;
+        std::cout << "FAIL is binded" << std::endl;
 	if (::listen(this->_fd, 128) <= -1)
-        std::cout << "FAIL" << std::endl;
+        std::cout << "FAIL listen" << std::endl;
 	std::cout << "Listening:\t" << this->_fd << "" << std::endl;
 }
 

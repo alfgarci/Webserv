@@ -53,21 +53,26 @@ Server& Server::operator=(const Server &other)
 
 void	Server::setupSocket()
 {
-	_main_socket = Socket(this->_ip, this->_port);
-	this->_socket_fd = _main_socket.getFd();
-	_main_socket.bind();
-}
-
-void	Server::startListenNonBlock()
-{
-	_main_socket.listen();
-	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) < 0)
+	Socket	tmp;
+	int		fd_tmp;
+	for (std::list<int>::iterator it = _port.begin(); it != _port.end(); ++it)
 	{
-		std::cout << "FAIL" << std::endl;
+		tmp = Socket(this->_ip, *it);
+		fd_tmp = tmp.getFd();
+		tmp.bind();
+		tmp.listen();
+		if (fcntl(fd_tmp, F_SETFL, O_NONBLOCK) < 0)
+		{
+			std::cout << "FAIL frnc socket prin" << std::endl;
+		}
+		_socket_fd.push_back(fd_tmp);
+		_main_socket.push_back(tmp);
+
 	}
 }
 
 void Server::close()
 {
-	this->_main_socket.close();
+	for (std::list<Socket>::iterator it = _main_socket.begin(); it != _main_socket.end(); ++it)
+		it->close();
 }

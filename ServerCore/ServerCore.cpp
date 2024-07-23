@@ -1,29 +1,40 @@
 #include "ServerCore.hpp"
 
+ServerCore::ServerCore( std::vector<t_server> servers )
+{
+	Server server_tmp;
+	for (std::vector<t_server>::iterator it = servers.begin(); it != servers.end(); ++it)
+	{
+		_servers.push_back(Server(&(*it)));
+	}
+}
+
 ServerCore::ServerCore( std::vector<Server> servers )
 {
 	_servers = servers;
 	_max_fd = 0;
 	_select_timer.tv_sec = 1;
 	_select_timer.tv_usec = 0;
+}
+
+void	ServerCore::prepareServer()
+{
+	list<int>	mains_fd;
 
 	FD_ZERO(&_recv_pool);
 	FD_ZERO(&_wrt_pool);
 	for (std::vector<Server>::iterator it = _servers.begin(); it != _servers.end(); ++it)
 	{
-		it->startListenNonBlock();
-		addFdSet(it->getSocketFd(), this->_recv_pool);
-		_servers_fd_map.insert(std::make_pair(it->getSocketFd(), *it));
-	}
-	_max_fd = _servers.back().getSocketFd();
-}
-
-void	ServerCore::setupServers()
-{
-	for (std::vector<Server>::iterator it = _servers.begin(); it != _servers.end(); ++it)
-	{
 		it->setupSocket();
+		mains_fd = it->getSocketFd();
+		for (std::list<int>::iterator it2 = mains_fd.begin(); it2 != mains_fd.end(); ++it2)
+		{
+			addFdSet(*it2, this->_recv_pool);
+			_servers_fd_map.insert(std::make_pair(*it2, *it));
+		}
+		std::cout << std::endl << std::endl;
 	}
+	_max_fd = _servers.back().getSocketFd().back();
 }
 
 void	ServerCore::launchServers()
@@ -40,13 +51,14 @@ void	ServerCore::launchServers()
 
 		if (select(_max_fd + 1, &recv_tmp, &wrt_tmp, NULL, &_select_timer) < 0 )
 		{
-			std::cout << "FAIL" << std::endl;
+			std::cout << "FAIL select" << std::endl;
 		}
 		for (int i = 0; i <= _max_fd; ++i)
 		{
 			if (FD_ISSET(i, &_recv_pool) && _servers_fd_map.count(i))
 			{
-				newConnection(_servers_fd_map.find(i)->second); //pasamos el server
+				newConnection(_servers_fd_map.find(i)->second, i); //pasamos el server
+				std::cout << "NUEVO CLIENTE CONECTADO: " << i << std::endl;
 			}
 			else if (FD_ISSET(i, &_recv_pool) && _client_map.count(i))
 			{
@@ -60,24 +72,24 @@ void	ServerCore::launchServers()
 	}
 }
 
-void	ServerCore::newConnection(Server &server)
+void	ServerCore::newConnection(Server &server, int server_fd)
 {
 	struct	sockaddr_in client_addr;
 	long	client_addr_size = sizeof(client_addr);
 	Client	client_tmp;
 	int		client_fd;
 
-	client_fd = accept(server.getSocketFd(), (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_size);
+	client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_size);
 	if (client_fd == -1)
 	{
-		std::cout << "FAIL" << std::endl;
+		std::cout << "FAIL acept" << std::endl;
 	}
 	
 	addFdSet(client_fd, _recv_pool);
 
 	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) < 0)
 	{
-		std::cout << "FAIL" << std::endl;
+		std::cout << "FAIL fnc" << std::endl;
 	}
 	client_tmp.setSocketClient(client_fd);
 	_client_map.insert(std::make_pair(client_fd, client_tmp));

@@ -8,10 +8,10 @@
 class Server
 {
 private:
-	Socket		_main_socket;
+	list<Socket>	_main_socket;
 	std::string	_ip;
-	uint16_t	_port;
-	int			_socket_fd;
+	list<int>	_port;
+	list<int>	_socket_fd;
 	int			_client_limit_body_size;
 	std::string	_server_name;
 	std::string	_root;
@@ -28,9 +28,10 @@ public:
 	Server(const Server &other);
 	Server& operator=(const Server &other);
 
-	void	setupSocket();
-	void	startListenNonBlock();
-	int		getSocketFd() { return this->_socket_fd; };
+	void			setupSocket();
+	list<int>		getSocketFd() { return this->_socket_fd; };
+	list<int>		getPorts() { return this->_port; };
+	std::string 	getIp() {return this->_ip; };
 	~Server(){ this->close(); }
 
 	void close();
