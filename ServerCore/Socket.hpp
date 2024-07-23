@@ -14,19 +14,28 @@
 class Socket
 {
 private:
-    std::string ip;
-    uint16_t port;
-    bool binded;
-    int fd;
-    int domain;
-    int type;
-    int protocol;
-    struct sockaddr_in sockaddr;
+	std::string			_ip;
+	uint16_t			_port;
+	bool				_binded;
+	int					_fd;
+	int					_domain;
+	int					_type;
+	int					_protocol;
+	struct sockaddr_in	_sockaddr;
 public:
-    Socket(const std::string & ip, uint16_t port);
-    void bind(void);
-    void listen(void);
-    void close(void);
 
-    int getFd();
+	Socket();
+	Socket(const Socket &other);
+	Socket& operator=(const Socket &other);
+
+	Socket(const std::string & ip, uint16_t port);
+
+	void bind(void);
+	void listen(void);
+	void close(void);
+
+	int getFd() const;
+	struct sockaddr_in	getSockAddr() const;
+	void setFd(int fd);
+	void setSockAddr(const struct sockaddr_in &addr);
 };
