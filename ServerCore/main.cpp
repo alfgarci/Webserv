@@ -14,27 +14,28 @@ int main()
     server1.port.push_back(8001);
     server1.port.push_back(8002);
 
-    t_server server2;
-    server2.host = "192.168.1.1";      // Rellenar el host
-    server2.port.push_back(8080);      // Rellenar la lista de puertos
-    server2.port.push_back(8081);
+    // t_server server2;
+    // server2.host = "127.0.0.1";        // Rellenar el host
+    // server2.port.push_back(8080);      // Rellenar la lista de puertos
+    // server2.port.push_back(8081);
 
-    t_server server3;
-    server3.host = "10.0.0.1";         // Rellenar el host
-    server3.port.push_back(1234);      // Rellenar la lista de puertos
-    server3.port.push_back(5678);
+    // t_server server3;
+    // server3.host = "192.168.1.1";      // Rellenar el host
+    // server3.port.push_back(1234);      // Rellenar la lista de puertos
+    // server3.port.push_back(5678);
 
 	Server s1(&server1);
-	Server s2(&server2);
-	Server s3(&server3);
+	// Server s2(&server2);
+	// Server s3(&server3);
 
 	sss.push_back(server1);
-	sss.push_back(server2);
-	sss.push_back(server3);
+	// sss.push_back(server2);
+	// sss.push_back(server3);
 
 	ServerCore core(sss);
 
-	//core.launchServers();
+	core.prepareServer();
+	core.launchServers();
 
 	return 0;
 }

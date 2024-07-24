@@ -131,6 +131,19 @@ HTTPREQUESTCREATOR_SRCS_CLASS = $(addsuffix .cpp, $(HTTPREQUESTCREATOR_CLASS))
 HTTPREQUESTCREATOR_SRCS = \
 	$(HTTPREQUESTCREATOR_SRCS_CLASS) \
 
+#-------------------------------------------------------------------SERVERCORE
+
+
+SERVERCORE_DIR = ServerCore
+
+SERVERCORE_CLASS = ServerCore
+SERVERCORE_SRCS_CLASS = $(addsuffix .cpp, $(SERVERCORE_CLASS))
+
+SERVERCORE_SRCS = \
+	$(SERVERCORE_SRCS_CLASS) \
+
+
+
 #-------------------------------------------------------------------SRCS
 
 SRCS =	\
@@ -138,6 +151,7 @@ SRCS =	\
 		$(addprefix $(HTTPREQUESTPARSE_DIR)/, $(HTTPREQUESTPARSE_SRCS)) \
 		$(addprefix $(HTTPREQUESTCREATOR_DIR)/, $(HTTPREQUESTCREATOR_SRCS)) \
 		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
+		$(addprefix $(SERVERCORE_DIR)/, $(SERVERCORE_SRCS)) \
 		$(addsuffix .cpp, $(MAIN)) \
 
 #-------------------------------------------------------------------RULES

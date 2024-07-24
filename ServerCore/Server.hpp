@@ -32,7 +32,7 @@ public:
 	list<int>		getSocketFd() { return this->_socket_fd; };
 	list<int>		getPorts() { return this->_port; };
 	std::string 	getIp() {return this->_ip; };
-	~Server(){ this->close(); }
+	~Server() { /* this->close(); */ }
 
 	void close();
-}; 
+};

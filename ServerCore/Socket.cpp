@@ -59,7 +59,7 @@ void Socket::bind(void)
 		return;
 	bind_status = ::bind(this->_fd, reinterpret_cast< const struct sockaddr * >(&this->_sockaddr), sizeof(this->_sockaddr));
 	if (bind_status <= -1)
-        std::cout << "FAIL bind" << std::endl;
+		std::cout << "FAIL bind" << std::endl;
 	this->_binded = true;
 }
 
@@ -74,8 +74,11 @@ void Socket::listen(void)
 
 void Socket::close(void)
 {
-	if (this->_fd >= -1)
-		::close(this->_fd);
+	// if (this->_fd >= -1)
+	// {
+	// 	::close(this->_fd);
+	// 	this->_fd = -1;
+	// }
 }
 
 int Socket::getFd() const

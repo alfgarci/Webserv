@@ -67,7 +67,6 @@ void	Server::setupSocket()
 		}
 		_socket_fd.push_back(fd_tmp);
 		_main_socket.push_back(tmp);
-
 	}
 }
 

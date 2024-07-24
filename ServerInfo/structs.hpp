@@ -34,6 +34,4 @@ typedef struct	s_requirements
 	
 }				t_requirements;
 
-
-
 #endif
