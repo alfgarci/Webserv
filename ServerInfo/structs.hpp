@@ -19,10 +19,11 @@ typedef	struct	s_route
 	string				cgi;
 }				t_route;
 
+
 typedef struct	s_server
 {
 	list<int>			port;
-	int					host;
+	string				host;
 	string				name;
 	unsigned int		body_size_limit;
 	list<t_route>		routes;
@@ -32,7 +33,5 @@ typedef struct	s_requirements
 {
 	
 }				t_requirements;
-
-
 
 #endif
