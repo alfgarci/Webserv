@@ -136,7 +136,13 @@ HTTPREQUESTCREATOR_SRCS = \
 
 SERVERCORE_DIR = ServerCore
 
-SERVERCORE_CLASS = ServerCore
+SERVERCORE_CLASS = \
+ServerCore \
+Client \
+Server \
+Socket
+
+
 SERVERCORE_SRCS_CLASS = $(addsuffix .cpp, $(SERVERCORE_CLASS))
 
 SERVERCORE_SRCS = \

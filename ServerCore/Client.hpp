@@ -4,7 +4,6 @@
 #include "Server.hpp"
 #include "../HTTPRequestParse/HTTPRequestParse.hpp"
 
-
 class Client
 {
 private:
