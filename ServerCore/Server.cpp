@@ -8,11 +8,12 @@ Server::Server(t_server *info_server)
 {
 	_port = info_server->port;
 	_ip = info_server->host;
-	_server_name = info_server->name;
+	_name = info_server->name;
 	_client_limit_body_size = info_server->body_size_limit;
 	_root = "/";
 	_index = "index.html";
 	_auto_index = false;
+	_locations = info_server->routes;
 }
 
 Server::Server(const Server &other)
@@ -22,13 +23,11 @@ Server::Server(const Server &other)
 	_port = other._port;
 	_socket_fd = other._socket_fd;
 	_client_limit_body_size = other._client_limit_body_size;
-	_server_name = other._server_name;
+	_name = other._name;
 	_root = other._root;
 	_index = other._index;
-	_auto_index = other._auto_index;
-	_error_pages = other._error_pages;
-	current_socket = other.current_socket;
-	ready_socket = other.ready_socket;
+	_auto_index = other._auto_index;;
+	_locations = other._locations;
 }
 
 Server& Server::operator=(const Server &other)
@@ -40,13 +39,11 @@ Server& Server::operator=(const Server &other)
 		_port = other._port;
 		_socket_fd = other._socket_fd;
 		_client_limit_body_size = other._client_limit_body_size;
-		_server_name = other._server_name;
+		_name = other._name;
 		_root = other._root;
 		_index = other._index;
 		_auto_index = other._auto_index;
-		_error_pages = other._error_pages;
-		current_socket = other.current_socket;
-		ready_socket = other.ready_socket;
+		_locations = other._locations;
 	}
 	return *this;
 }

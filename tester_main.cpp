@@ -2,6 +2,7 @@
 #include "ServerInfo/ServerInfo.hpp"
 #include "tester/tester.hpp"
 #include "HTTPRequestCreator/HTTPRequestCreator.hpp"
+#include "ServerCore/ServerCore.hpp"
 
 int test_creator()
 {
@@ -99,6 +100,9 @@ int	main(int argc, char **argv)
 		{
 			list<t_server> s = ServerInfo::store_file("tester/test_files/right_file.test");
 			ServerInfo::print_t_server(s.front());
+            ServerCore c(s);
+            c.prepareServer();
+            c.launchServers();
 		}
 		catch(const std::exception& e)
 		{

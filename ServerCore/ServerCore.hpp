@@ -5,6 +5,7 @@
 #include "Client.hpp"
 #include <vector>
 #include <map>
+#include <fstream> 
 
 class ServerCore
 {
@@ -18,16 +19,22 @@ class ServerCore
 		struct timeval			_select_timer;
 	
 	public:
-
+	
 		struct timeval	select_timer;
 
-		ServerCore( std::vector<t_server> servers );
-		ServerCore( std::vector<Server> servers );
+		ServerCore( std::list<t_server> servers );
 
 		void	prepareServer();
 		void	launchServers();
 
 		void	addFdSet(int fd, fd_set &set);
+		void	eraseFdSet(int fd, fd_set &set);
+		
 		void	newConnection(Server &server, int server_fd);
 		void	readRequest(int fd, Client &client);
+		void	sendResponse(int fd, Client &client);
+
+		void 	sendErrorResponse(int fd, int errorCode, const std::string& errorPage);
+
+		void	closeConection(int fd);
 };
