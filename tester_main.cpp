@@ -2,6 +2,7 @@
 #include "ServerInfo/ServerInfo.hpp"
 #include "tester/tester.hpp"
 #include "HTTPRequestCreator/HTTPRequestCreator.hpp"
+#include "ServerCore/ServerCore.hpp"
 
 int test_creator()
 {

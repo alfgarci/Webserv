@@ -43,7 +43,7 @@ Socket::Socket(const std::string & ip, uint16_t port)
 
 	/* Set the socket to reuse (makes it re-bindable directly after close) */
 	int reuse_addr = true;
-	setsockopt(this->_fd, SOL_SOCKET, SO_NOSIGPIPE, &reuse_addr, sizeof(reuse_addr));
+	setsockopt(this->_fd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
 
 	/* Init sockaddr */
 	memset(&this->_sockaddr, 0, sizeof(this->_sockaddr));

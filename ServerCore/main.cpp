@@ -5,8 +5,7 @@
 
 int main()
 {
-	std::vector<Server>	server;
-	std::vector<t_server>	sss;
+	std::list<t_server>	sss;
 
 	t_server server1;
     server1.host = "127.0.0.1";        // Rellenar el host
