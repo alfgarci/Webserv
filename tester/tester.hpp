@@ -57,6 +57,11 @@ class tester : public ServerInfo
 		void	test_is_char_in_keyword_set(int &test_number);
 		void	test_is_keyword_in_set(int &test_number);
 
+		//TEST_STORE
+		//-------------------------------------------------------
+
+		void	test_store_file(string path, int &test_number, bool expected_result);
+
 		//-------------------------------------------------------
 
 	protected:

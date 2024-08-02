@@ -81,9 +81,13 @@ void	test_ServerInfo(void)
 	cout << "----------------------------------" << endl;
 	t.test_is_char_in_keyword_set(test_number);
 	t.test_is_keyword_in_set(test_number);
+    cout << endl << "TEST STORE" << endl;
+	cout << "----------------------------------" << endl;
+	t.test_store_file("tester/test_files/right_file.test", test_number, true);
+	t.test_store_file("tester/test_files/tricky_server.test", test_number, false);
 }
 
-# define RUN_TEST_INFO 0
+# define RUN_TEST_INFO 1
 # define RUN_TEST_HTTPRREQUESTPARSE 0
 # define RUN_TEST_HTTPRREQUESTCREATOR 0
 
@@ -96,17 +100,5 @@ int	main(int argc, char **argv)
 	if (RUN_TEST_INFO)
 	{
 		test_ServerInfo();
-		try
-		{
-			list<t_server> s = ServerInfo::store_file("tester/test_files/right_file.test");
-			ServerInfo::print_t_server(s.front());
-            ServerCore c(s);
-            c.prepareServer();
-            c.launchServers();
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
 	}
 }

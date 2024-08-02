@@ -38,17 +38,19 @@ access to the file, and that it exist, thanks ^^."
 # define BAD_INDENTATION "Bad indentation at line: "
 # define ERROR_NOT_ENOUGH_MEMORY "Memory reserve, fail, exiting."
 # define BAD_BOOLEAN_STRING "Boolean string is badly formated, accepted formats (true/false)."
+# define ERROR_CAMP_UNINITIALIZE "There are uninitialize camps, pls initialize them"
 
-# define DEFAULT_BODY_SIZE 1000
-# define DEFAULT_HOST 10
-# define DEFAULT_NAME "pepito"
+# define DEFAULT_BODY_SIZE 0
+# define DEFAULT_HOST 0
+# define DEFAULT_PORT 0
+# define DEFAULT_NAME ""
 # define DEFAULT_METHOD_GET "GET"
 # define DEFAULT_METHOD_PUSH "PUSH"
-# define DEFAULT_CGI "cgi"
-# define DEFAULT_FILE_TO_ANSWER "here"
-# define DEFAULT_DIR_TO_LISTEN "this"
-# define DEFAULT_HTTP_REDI "HERE"
-# define DEFAULT_SEARCH_DIR "THIS"
+# define DEFAULT_CGI ""
+# define DEFAULT_FILE_TO_ANSWER ""
+# define DEFAULT_DIR_TO_LISTEN ""
+# define DEFAULT_HTTP_REDI ""
+# define DEFAULT_SEARCH_DIR ""
 
 # define TRUE_STRING "true"
 # define FALSE_STRING "false"
@@ -92,6 +94,7 @@ class ServerInfo
 		static t_route			initiate_route();
 		static void				free_reserved_space_for_structs();
 		static string			get_line_content(string line);
+		static bool				verify_no_defaults(list<t_server> &lst);
 
 		//-------------------------------------------------------
 		static void	print_t_server(t_server	&serv);

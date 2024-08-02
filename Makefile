@@ -62,6 +62,7 @@ store_route \
 initiate_route \
 initiate_server \
 get_line_content \
+verify_no_defaults \
 
 
 SERVER_INFO_STORE_DIR = store/
@@ -103,10 +104,18 @@ TESTER_IS_FUNS_DIR = test_is_funs/
 TESTER_IS_FUNS_SRCS = \
 $(addprefix $(TESTER_IS_FUNS_DIR), $(addsuffix .cpp, $(TESTER_IS_FUNS)))
 
+TESTER_STORE = \
+test_store_file
+
+TESTER_STORE_DIR = test_store/
+TESTER_STORE_SRCS = \
+$(addprefix $(TESTER_STORE_DIR), $(addsuffix .cpp, $(TESTER_STORE)))
+
 TESTER_SRCS = \
 	$(TESTER_SRCS_CLASS) \
 	$(TESTER_CHECKER_SRCS) \
 	$(TESTER_IS_FUNS_SRCS) \
+	$(TESTER_STORE_SRCS) \
 
 #-------------------------------------------------------------------HTTPREQUESTPARSE
 

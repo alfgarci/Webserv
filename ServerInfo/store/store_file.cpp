@@ -100,6 +100,7 @@ list<t_server>	ServerInfo::store_file(string path)
 		change_indenation_level(indentation_level, s);
 	}
 	file.close();
-	lst_server.front();
+	if (!ServerInfo::verify_no_defaults(lst_server))
+		throw (std::logic_error(ERROR_CAMP_UNINITIALIZE));
 	return (lst_server);
 }
