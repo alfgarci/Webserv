@@ -4,8 +4,10 @@ server:
 	port=8001
 	server_name=prueba1
 	body_limit=104801
+	search_dir=./
 	route:
 		accepted_http_methods=GET
+		accepted_http_methods=POST
 		http_redirections=PACO
 		default_file=./indexPages/index.html
 		dir_listen=true

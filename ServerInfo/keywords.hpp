@@ -42,7 +42,8 @@ enum e_server_keywords
 	host = 1,
 	server_name = 2,
 	body_limit = 3,
-	route = 4
+	route = 4,
+	search_dir_server = 5
 };
 
 enum e_route_keywords
@@ -80,6 +81,7 @@ class DictionaryCreator
 			d[server_name] = SERVER_NAME_KEYWORD;
 			d[body_limit] = CLIENT_BODY_LIMIT_KEYWORD;
 			d[route] = ROUTE_KEYWORD;
+			d[search_dir_server] = SEARCH_DIR_KEYWORD;
 			return (d);
 		}
 		static Dictionary create_route_dict()

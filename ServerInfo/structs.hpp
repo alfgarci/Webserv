@@ -31,6 +31,7 @@ typedef struct	s_server
 	string				host;
 	string				name;
 	unsigned int		body_size_limit;
+	string				search_dir;
 	list<t_route>		routes;
 }				t_server;
 
