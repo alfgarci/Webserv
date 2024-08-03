@@ -20,7 +20,7 @@ using std::string;
 class Socket
 {
 private:
-	string			_ip;
+	string				_ip;
 	uint16_t			_port;
 	bool				_binded;
 	int					_fd;

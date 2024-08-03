@@ -13,13 +13,16 @@
 #include "../libs/to_string.hpp"
 
 using std::string;
+using std::map;
+using std::list;
+using std::vector;
 
 class ServerCore
 {
 	private:
-		std::vector<Server>		_servers;
-		std::map<int, Server>	_servers_fd_map;
-		std::map<int, Client>	_client_map;
+		vector<Server>		_servers;
+		map<int, Server>	_servers_fd_map;
+		map<int, Client>	_client_map;
 		fd_set					_recv_pool;
 		fd_set					_wrt_pool;
 		int						_max_fd;
@@ -29,7 +32,7 @@ class ServerCore
 	
 		struct timeval	select_timer;
 
-		ServerCore( std::list<t_server> servers );
+		ServerCore( list<t_server> servers );
 
 		void	prepareServer();
 		void	launchServers();

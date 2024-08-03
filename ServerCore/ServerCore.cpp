@@ -1,9 +1,9 @@
 #include "ServerCore.hpp"
 
-ServerCore::ServerCore( std::list<t_server> servers )
+ServerCore::ServerCore( list<t_server> servers )
 {
     Server server_tmp;
-    for (std::list<t_server>::iterator it = servers.begin(); it != servers.end(); ++it)
+    for (list<t_server>::iterator it = servers.begin(); it != servers.end(); ++it)
     {
         _servers.push_back(Server(&(*it)));
     }
@@ -18,12 +18,12 @@ void	ServerCore::prepareServer()
 	_max_fd = 0;
 	FD_ZERO(&_recv_pool);
 	FD_ZERO(&_wrt_pool);
-	for (std::vector<Server>::iterator it = _servers.begin(); it != _servers.end(); ++it)
+	for (vector<Server>::iterator it = _servers.begin(); it != _servers.end(); ++it)
 	{
 		std::cout << "Server [" << it->getIp() << "] :" << std::endl;
 		it->setupSocket();
 		mains_fd = it->getSocketFd();
-		for (std::list<int>::iterator it2 = mains_fd.begin(); it2 != mains_fd.end(); ++it2)
+		for (list<int>::iterator it2 = mains_fd.begin(); it2 != mains_fd.end(); ++it2)
 		{
 			std::cout <<  "SOCKET FD: " << *it2 << std::endl;
 			if (*it2 < 0)
