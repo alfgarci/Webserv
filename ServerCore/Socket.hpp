@@ -10,6 +10,10 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 
 class Socket
 {

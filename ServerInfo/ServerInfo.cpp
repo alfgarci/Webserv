@@ -53,6 +53,7 @@ void	ServerInfo::print_t_server(t_server	&serv)
 {
 	list<int>::iterator		port_it;
 	list<t_route>::iterator	route_it;
+	list<t_CGI>::iterator	CGI_it;
 	list<string>::iterator	methods_it;
 
 	port_it = serv.port.begin();
@@ -69,7 +70,14 @@ void	ServerInfo::print_t_server(t_server	&serv)
 	cout << "ROUTES:" << endl;
 	while (route_it != serv.routes.end())
 	{
-		cout << CGI_KEYWORD << TOKEN_ASSIGNMENT << (*route_it).cgi << endl;
+		cout << "CGI:" << endl;
+		CGI_it = route_it->cgi.begin();
+		while (CGI_it != route_it->cgi.end())
+		{
+			cout << CGI_it->file_targets << endl;
+			cout << CGI_it->path_of_cgi << endl;
+			CGI_it++;
+		}
 		cout << DEFAULT_FILE_TO_ANSWER_KEYWORD << TOKEN_ASSIGNMENT << (*route_it).default_file_to_answer << endl;
 		cout << TOOGLE_DIR_LISTEN_KEYWORD << TOKEN_ASSIGNMENT << (*route_it).dir_to_listen << endl;
 		cout << HTTP_REDIRECTIONS_KEYWORD << TOKEN_ASSIGNMENT << (*route_it).http_redirections << endl;

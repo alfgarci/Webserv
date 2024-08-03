@@ -29,8 +29,4 @@ void	ServerInfo::store_route(string s, t_server &server_struct)
 	{
 		current_route.default_file_to_answer = get_line_content(s);
 	}
-	if (check_for_keyword(s, Route_dictionary.at(CGI)))
-	{
-		current_route.cgi = get_line_content(s);
-	}
 }

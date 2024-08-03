@@ -36,6 +36,7 @@ SERVER_INFO_CHECKER = \
 check_indentation \
 check_indentation_level \
 check_for_indentation_token \
+check_for_incorrect_token \
 check_for_assignment_token \
 check_for_keyword_in_line \
 check_for_keyword \
@@ -58,11 +59,15 @@ $(addprefix $(SERVER_INFO_IS_FUNS_DIR), $(addsuffix .cpp, $(SERVER_INFO_IS_FUNS)
 SERVER_INFO_STORE = \
 store_file \
 store_server \
+store_cgi \
+store_host \
 store_route \
 initiate_route \
+initiate_cgi \
 initiate_server \
 get_line_content \
 verify_no_defaults \
+verify_http_methods \
 
 
 SERVER_INFO_STORE_DIR = store/

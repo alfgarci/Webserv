@@ -4,6 +4,11 @@
 #include "Server.hpp"
 #include "../HTTPRequestParse/HTTPRequestParse.hpp"
 #include "../HTTPRequestCreator/HTTPRequestCreator.hpp"
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 
 class Client
 {
