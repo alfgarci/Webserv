@@ -9,7 +9,7 @@ static void change_indenation_level(int &indentation_level, string s)
 			if (indentation_level == server_level)
 				indentation_level = base_level;
 			if (indentation_level == route_level)
-				indentation_level = route_level;
+				indentation_level = server_level;
 			if (indentation_level == cgi_level)
 				indentation_level = route_level;
 		}
