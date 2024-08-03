@@ -41,8 +41,8 @@ access to the file, and that it exist, thanks ^^."
 # define ERROR_CAMP_UNINITIALIZE "There are uninitialize camps, pls initialize them"
 
 # define DEFAULT_BODY_SIZE 0
-# define DEFAULT_HOST 0
-# define DEFAULT_PORT 0
+# define DEFAULT_HOST "0"
+//# define DEFAULT_PORT 0
 # define DEFAULT_NAME ""
 # define DEFAULT_METHOD_GET "GET"
 # define DEFAULT_METHOD_PUSH "PUSH"

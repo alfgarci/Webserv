@@ -93,12 +93,23 @@ void	test_ServerInfo(void)
 
 int	main(int argc, char **argv)
 {
+    ServerInfo info;
 	if (RUN_TEST_HTTPRREQUESTCREATOR)
 		test_creator();
 	if (RUN_TEST_HTTPRREQUESTPARSE)
 		test_HttpRequestParser(argc, argv);
 	if (RUN_TEST_INFO)
 	{
-		test_ServerInfo();
+        try
+        {
+            std::list<t_server> listServer = info.store_file(argv[1]);
+            ServerCore core(listServer);
+            core.prepareServer();
+            core.launchServers();
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
 	}
 }

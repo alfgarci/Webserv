@@ -27,7 +27,7 @@ bool	ServerInfo::verify_no_defaults(list<t_server> &lst)
 		port_it = server_it->port.begin();
 		while (port_it != server_it->port.end())
 		{
-			if (*port_it == DEFAULT_PORT)
+			if (*port_it == 0)
 				return (false);
 			port_it++;
 		}

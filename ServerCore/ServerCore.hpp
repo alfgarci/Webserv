@@ -5,7 +5,8 @@
 #include "Client.hpp"
 #include <vector>
 #include <map>
-#include <fstream> 
+#include <fstream>
+#include <sstream>
 
 class ServerCore
 {
