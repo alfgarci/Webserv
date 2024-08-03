@@ -13,6 +13,7 @@
 class Server
 {
 private:
+
 	list<Socket>				_main_socket;
 	std::list<int>				_socket_fd;
 	std::string					_ip;
@@ -34,7 +35,8 @@ public:
 	void			setupSocket();
 	list<int>		getSocketFd() { return this->_socket_fd; };
 	list<int>		getPorts() { return this->_port; };
-	std::string 	getIp() {return this->_ip; };
+	std::string 	getIp() { return this->_ip; };
+	list<t_route>	getLocations() { return this->_locations; };
 	~Server() { /* this->close(); */ }
 
 	void close();

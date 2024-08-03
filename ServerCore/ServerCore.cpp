@@ -60,13 +60,11 @@ void	ServerCore::launchServers()
 				{
 					newConnection(_servers_fd_map.find(i)->second, i); //pasamos el server
 					std::cout << "NUEVO CLIENTE CONECTADO: " << i << std::endl;
-					//write(i, "HOLA QUE TAL", strlen("HOLA QUE TAL"));
 				}
 				else if (FD_ISSET(i, &recv_tmp) && _client_map.count(i))
 				{
 					readRequest(i, _client_map[i]);
 					std::cout << "RECIBIENDO INFORMACION DEL CLIENTE: " << std::endl;
-					std::cout << "FD TO CLR: " << i << std::endl;
 				}
 				else if (FD_ISSET(i, &wrt_tmp) && _client_map.count(i))
 				{
@@ -118,13 +116,12 @@ void	ServerCore::readRequest(int fd, Client &client)
 	else
 	{
 		//timepo mesg cliente
+		std::cout << "He leido: " << buffer << std::endl;
 		client.setRequest(buffer, bytes_read);
 		client.setRequestBytesRead(bytes_read);
 		client.doParseRequest();
 		eraseFdSet(fd, _recv_pool);
 		addFdSet(fd, _wrt_pool);
-		//FD_CLR(fd, &_recv_pool);
-		//FD_SET(fd, &_wrt_pool);
 	}
 	//suponemo que esta bien la solicitud
 }
@@ -153,6 +150,7 @@ void	ServerCore::sendResponse(int fd, Client &client)
 	
 }
 
+/*
 void sendErrorResponse(int clientSocket, int errorCode, const std::string& errorPage)
 {
     std::ifstream file(errorPage.c_str());
@@ -175,8 +173,9 @@ void sendErrorResponse(int clientSocket, int errorCode, const std::string& error
                            "Content-Length: " + to_string(content.size()) + "\r\n\r\n" +
                            content;
 
-    send(clientSocket, response.c_str(), response.size(), 0);
+    //send(clientSocket, response.c_str(), response.size(), 0);
 }
+*/
 
 
 void	ServerCore::addFdSet(int fd, fd_set &set)
