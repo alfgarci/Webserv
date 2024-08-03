@@ -8,7 +8,7 @@ void	ServerInfo::store_server(string s, t_server &server_struct)
 	}
 	if (check_for_keyword(s, Server_dictionary.at(host)))
 	{
-		server_struct.host = atoi(get_line_content(s).c_str());
+		server_struct.host = store_host(s);
 	}
 	if (check_for_keyword(s, Server_dictionary.at(server_name)))
 	{

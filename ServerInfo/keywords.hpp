@@ -28,6 +28,8 @@ typedef std::map<int, string> Dictionary;
 # define TOOGLE_DIR_LISTEN_KEYWORD "dir_listen"
 # define DEFAULT_FILE_TO_ANSWER_KEYWORD "default_file"
 # define CGI_KEYWORD "CGI"
+# define FILE_TARGETS "files"
+# define PATH_OF_CGI "path"
 
 enum e_base_keywords
 {
@@ -51,6 +53,12 @@ enum e_route_keywords
 	toogle_dir_listen = 3,
 	default_file_to_answer = 4,
 	CGI = 5
+};
+
+enum e_CGI_keywords
+{
+	file_targets = 0,
+	path_of_cgi = 1
 };
 
 class DictionaryCreator
@@ -86,17 +94,27 @@ class DictionaryCreator
 			d[CGI] = CGI_KEYWORD;
 			return (d);
 		}
+		static Dictionary create_CGI_dict()
+		{
+			Dictionary	d;
+
+			d[file_targets] = FILE_TARGETS;
+			d[path_of_cgi] = PATH_OF_CGI;
+			return (d);
+		}
 };
 
 static const Dictionary Base_dictionary = DictionaryCreator::create_base_dict();
 static const Dictionary Server_dictionary = DictionaryCreator::create_server_dict();
 static const Dictionary Route_dictionary = DictionaryCreator::create_route_dict();
+static const Dictionary CGI_dictionary = DictionaryCreator::create_CGI_dict();
 
 enum e_indentation_level_keywords
 {
 	base_level = 0,
 	server_level = 1,
-	route_level = 2
+	route_level = 2,
+	cgi_level = 3
 };
 
 class IndentationCreator
@@ -109,6 +127,7 @@ class IndentationCreator
 			d[base_level] = Base_dictionary;
 			d[server_level] = Server_dictionary;
 			d[route_level] = Route_dictionary;
+			d[cgi_level] = CGI_dictionary;
 			return (d);
 		}
 };

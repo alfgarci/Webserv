@@ -6,8 +6,7 @@ server:
 	body_limit=104801
 	route:
 		accepted_http_methods=GET
-		accepted_http_methods=POST
+		http_redirections=PACO
 		default_file=./indexPages/index.html
 		dir_listen=true
 		search_dir=./
-		

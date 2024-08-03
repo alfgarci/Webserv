@@ -4,7 +4,7 @@
 @brief Check if the line contain a certain keyword
 @param s the line to be checked
 @param keyword the keyword to check
-@return True if it contains any keyword, False if not 
+@return True if it contains the keyword, False if not 
 */
 bool	ServerInfo::check_for_keyword(string s, string keyword)
 {

@@ -5,19 +5,15 @@
 
 
 server:
-<<<<<<< HEAD
-	port=8000
-	host=127.0.0.1
-=======
 	port=10
-	host=0.0.0.0
->>>>>>> master
+	host=4
 	port=41
 	server_name=HOLA
 	body_limit=104801
 	route:
 		accepted_http_methods=GET
 		accepted_http_methods=PUSH
+		CGI=HOLA
 		default_file=MANOLO
 		http_redirections=PACO
 		search_dir=NOPE

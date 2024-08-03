@@ -3,6 +3,11 @@
 #include "Socket.hpp"
 #include "../ServerInfo/structs.hpp"
 #include <map>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 #include <fcntl.h>
 
 class Server

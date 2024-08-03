@@ -10,6 +10,8 @@ static void change_indenation_level(int &indentation_level, string s)
 				indentation_level = base_level;
 			if (indentation_level == route_level)
 				indentation_level = route_level;
+			if (indentation_level == cgi_level)
+				indentation_level = route_level;
 		}
 	}
 	else
@@ -19,7 +21,9 @@ static void change_indenation_level(int &indentation_level, string s)
 			if (ServerInfo::check_for_keyword(s, Base_dictionary.at(server)))
 				indentation_level = server_level;
 			if (ServerInfo::check_for_keyword(s, Server_dictionary.at(route)))
-				indentation_level =  route_level;
+				indentation_level = route_level;
+			if (ServerInfo::check_for_keyword(s, Route_dictionary.at(CGI)))
+				indentation_level = cgi_level;
 		}
 	}
 }
@@ -73,15 +77,23 @@ static void select_store_method(list<t_server> &lst_server, int indentation_leve
 		&& ServerInfo::check_for_keyword(s, Server_dictionary.at(route))
 	)
 		lst_server.front().routes.push_front(ServerInfo::initiate_route());
+	if
+	(
+		indentation_level == route_level
+		&& ServerInfo::check_for_keyword(s, Route_dictionary.at(CGI))
+	)
+		lst_server.front().routes.front().cgi.push_front(ServerInfo::initiate_cgi());
 	if (indentation_level == server_level)
 		ServerInfo::store_server(s, lst_server.front());
 	if (indentation_level == route_level)
 		ServerInfo::store_route(s, lst_server.front());
+	if (indentation_level == cgi_level)
+		ServerInfo::store_cgi(s, lst_server.front());
 }
 
 /*
 @brief Store the given file, into a list of list<t_server>, would throw errors if at any point
-the requirements fail, if the file dosent compliy, etc
+the requirements fail, if the file dosent comply, etc
 @param path the path to the file
 @return all the server configs that have been founded in the file
 */
@@ -100,7 +112,9 @@ list<t_server>	ServerInfo::store_file(string path)
 		change_indenation_level(indentation_level, s);
 	}
 	file.close();
-	if (!ServerInfo::verify_no_defaults(lst_server))
+	if (!verify_no_defaults(lst_server))
 		throw (std::logic_error(ERROR_CAMP_UNINITIALIZE));
+	if (!verify_http_methods(lst_server))
+		throw (std::logic_error(ERROR_DUPLICATED_HTTP_METHODS));
 	return (lst_server);
 }

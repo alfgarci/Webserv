@@ -5,13 +5,8 @@
 
 
 server:
-<<<<<<< HEAD
-	port=8000
-	host=127.0.0.1
-=======
 	port=10
-	host=0.0.0.0
->>>>>>> master
+	host=0.0.255.0
 	port=41
 	server_name=HOLA
 	body_limit=104801
@@ -21,4 +16,8 @@ server:
 		default_file=MANOLO
 		http_redirections=PACO
 		search_dir=NOPE
+		CGI:
+			path=THIS
+			files=.dot
+
 		dir_listen=true

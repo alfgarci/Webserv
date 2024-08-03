@@ -5,8 +5,12 @@
 #include "Client.hpp"
 #include <vector>
 #include <map>
+#include <iostream>
+#include <string>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
+#include "../libs/to_string.hpp"
 
 class ServerCore
 {

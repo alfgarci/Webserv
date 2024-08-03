@@ -15,7 +15,6 @@ void	tester::test_store_file(string path, int &test_number, bool expected_result
 			print_t_server(*it);
 			it++;
 		}
-		
 	}
 	catch(const std::exception& e)
 	{

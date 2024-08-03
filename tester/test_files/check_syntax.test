@@ -4,4 +4,4 @@ server
 server:
 	port=10
 	route:
-		CGI=potato
+		search_dir=potato

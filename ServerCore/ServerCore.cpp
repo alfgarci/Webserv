@@ -156,9 +156,9 @@ void sendErrorResponse(int clientSocket, int errorCode, const std::string& error
     std::ifstream file(errorPage.c_str());
     if (!file) {
         // En caso de que no se pueda abrir el archivo de error, enviar un mensaje
-        std::string response = "HTTP/1.1 " + std::to_string(errorCode) + " Error\r\n"
-                               "Content-Type: text/plain\r\n"
-                               "Content-Length: 0\r\n\r\n";
+        std::string response = "HTTP/1.1 " + to_string(errorCode) + " Error\r\n"
+                            	+ "Content-Type: text/plain\r\n"
+                            	+ "Content-Length: 0\r\n\r\n";
         send(clientSocket, response.c_str(), response.size(), 0);
         return;
     }
@@ -168,9 +168,9 @@ void sendErrorResponse(int clientSocket, int errorCode, const std::string& error
     std::string content = buffer.str();
 
     // Crear la respuesta HTTP con la página de error
-    std::string response = "HTTP/1.1 " + std::to_string(errorCode) + " Error\r\n"
+    std::string response = "HTTP/1.1 " + to_string(errorCode) + " Error\r\n"
                            "Content-Type: text/html\r\n"
-                           "Content-Length: " + std::to_string(content.size()) + "\r\n\r\n" +
+                           "Content-Length: " + to_string(content.size()) + "\r\n\r\n" +
                            content;
 
     //send(clientSocket, response.c_str(), response.size(), 0);
