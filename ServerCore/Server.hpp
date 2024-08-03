@@ -10,18 +10,20 @@
 #include <cstdlib>
 #include <fcntl.h>
 
+using std::string;
+
 class Server
 {
 private:
 
 	list<Socket>				_main_socket;
 	std::list<int>				_socket_fd;
-	std::string					_ip;
+	string						_ip;
 	std::list<int>				_port;
-	std::string					_name;
+	string						_name;
 	int							_client_limit_body_size;
-	std::string					_root;
-	std::string					_index;
+	string						_root;
+	string						_index;
 	bool						_auto_index;
 	std::list<t_route>			_locations;
 
@@ -35,7 +37,7 @@ public:
 	void			setupSocket();
 	list<int>		getSocketFd() { return this->_socket_fd; };
 	list<int>		getPorts() { return this->_port; };
-	std::string 	getIp() { return this->_ip; };
+	string 			getIp() { return this->_ip; };
 	list<t_route>	getLocations() { return this->_locations; };
 	~Server() { /* this->close(); */ }
 

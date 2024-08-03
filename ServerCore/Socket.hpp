@@ -15,10 +15,12 @@
 #include <sstream>
 #include <cstdlib>
 
+using std::string;
+
 class Socket
 {
 private:
-	std::string			_ip;
+	string			_ip;
 	uint16_t			_port;
 	bool				_binded;
 	int					_fd;
@@ -32,7 +34,7 @@ public:
 	Socket(const Socket &other);
 	Socket& operator=(const Socket &other);
 
-	Socket(const std::string & ip, uint16_t port);
+	Socket(const string & ip, uint16_t port);
 
 	void bind(void);
 	void listen(void);

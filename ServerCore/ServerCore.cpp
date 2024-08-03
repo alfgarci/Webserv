@@ -128,7 +128,7 @@ void	ServerCore::readRequest(int fd, Client &client)
 
 void	ServerCore::sendResponse(int fd, Client &client)
 {
-	std::string response = client.getResponse();
+	string response = client.getResponse();
 	int	bytes_sent = write(fd, response.c_str(), response.length());
 
 	if (bytes_sent < 0)

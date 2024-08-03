@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include "../libs/to_string.hpp"
 
+using std::string;
+
 class ServerCore
 {
 	private:
@@ -39,7 +41,7 @@ class ServerCore
 		void	readRequest(int fd, Client &client);
 		void	sendResponse(int fd, Client &client);
 
-		void 	sendErrorResponse(int fd, int errorCode, const std::string& errorPage);
+		void 	sendErrorResponse(int fd, int errorCode, const string& errorPage);
 
 		void	closeConection(int fd);
 };

@@ -11,4 +11,3 @@ server:
 		http_redirections=PACO
 		default_file=./indexPages/index.html
 		dir_listen=true
-		search_dir=./
