@@ -25,6 +25,8 @@ bool	ServerInfo::verify_no_defaults(list<t_server> &lst)
 			return (false);
 		if (server_it->port.empty())
 			return (false);
+		if (server_it->search_dir == DEFAULT_SEARCH_DIR)
+			return (false);
 		port_it = server_it->port.begin();
 		while (port_it != server_it->port.end())
 		{
@@ -51,7 +53,7 @@ bool	ServerInfo::verify_no_defaults(list<t_server> &lst)
 			if (route_it->http_redirections == DEFAULT_HTTP_REDI)
 				return (false);
 			if (route_it->search_dir == DEFAULT_SEARCH_DIR)
-				return (false);
+				route_it->search_dir = server_it->search_dir;
 			route_it++;
 		}
 		server_it++;
