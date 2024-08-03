@@ -10,3 +10,15 @@ server:
 		default_file=./indexPages/index.html
 		dir_listen=true
 		search_dir=./
+
+server:
+	port=8001
+	host=127.0.0.1
+	server_name=prueba2
+	body_limit=104801
+	route:
+		accepted_http_methods=GET
+		http_redirections=PACO
+		default_file=./indexPages/index.html
+		dir_listen=true
+		search_dir=./
