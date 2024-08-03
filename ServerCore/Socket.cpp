@@ -34,7 +34,7 @@ Socket& Socket::operator=(const Socket &other)
 	return *this;
 }
 
-Socket::Socket(const std::string & ip, uint16_t port)
+Socket::Socket(const string & ip, uint16_t port)
 	: _ip(ip), _port(port), _binded(false), _fd(-1), _domain(AF_INET), _type(SOCK_STREAM), _protocol(0)
 {
     this->_fd = socket(this->_domain, this->_type, this->_protocol);
