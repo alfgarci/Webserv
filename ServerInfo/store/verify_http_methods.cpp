@@ -11,10 +11,10 @@ bool	ServerInfo::verify_http_methods(list<t_server> &lst)
 	list<t_route>::iterator		route_it;
 	list<string>::iterator		it;
 	bool						get_flag;
-	bool						push_flag;
+	bool						post_flag;
 
 	get_flag = false;
-	push_flag = false;
+	post_flag = false;
 	server_it = lst.begin();
 	while (server_it != lst.end())
 	{
@@ -26,26 +26,29 @@ bool	ServerInfo::verify_http_methods(list<t_server> &lst)
 			it = route_it->accepted_http_methods.begin();
 			while (it != route_it->accepted_http_methods.end())
 			{
+				cout << *it << endl;
 				if
 				(
 					*it != DEFAULT_METHOD_GET
-					&& *it != DEFAULT_METHOD_PUSH
+					&& *it != DEFAULT_METHOD_POST
 				)
 					return (false);
 				if (*it == DEFAULT_METHOD_GET && get_flag)
 					return (false);
 				else if (*it == DEFAULT_METHOD_GET)
 					get_flag = true;
-				if (*it == DEFAULT_METHOD_PUSH && push_flag)
+				if (*it == DEFAULT_METHOD_POST && post_flag)
 					return (false);
-				else if (*it == DEFAULT_METHOD_PUSH)
-					push_flag = true;
+				else if (*it == DEFAULT_METHOD_POST)
+					post_flag = true;
 				it++;
 			}
 			get_flag = false;
-			push_flag = false;
+			post_flag = false;
 			route_it++;
 		}
+		get_flag = false;
+		post_flag = false;
 		server_it++;
 	}
 	return (true);

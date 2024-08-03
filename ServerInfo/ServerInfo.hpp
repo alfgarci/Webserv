@@ -58,7 +58,7 @@ access to the file, and that it exist, thanks ^^."
 # define DEFAULT_PORT_SERVER_INFO 0
 # define DEFAULT_NAME ""
 # define DEFAULT_METHOD_GET "GET"
-# define DEFAULT_METHOD_PUSH "PUSH"
+# define DEFAULT_METHOD_POST "POST"
 # define DEFAULT_FILE_TO_ANSWER ""
 # define DEFAULT_DIR_TO_LISTEN ""
 # define DEFAULT_HTTP_REDI ""
