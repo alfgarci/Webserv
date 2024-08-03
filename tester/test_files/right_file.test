@@ -5,13 +5,8 @@
 
 
 server:
-<<<<<<< HEAD
 	port=8000
 	host=127.0.0.1
-=======
-	port=10
-	host=0.0.0.0
->>>>>>> master
 	port=41
 	server_name=HOLA
 	body_limit=104801
