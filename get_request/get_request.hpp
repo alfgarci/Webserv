@@ -8,6 +8,7 @@
 #include <dirent.h>		// For opendir(), readdir(), closedir()
 #include <sys/stat.h>	// For stat()
 #include "../send_cgi_handle/send_cgi_handle.hpp"
+#include "../ServerCore/Server.hpp"
 
 using std::cerr;
 using std::string;
@@ -37,6 +38,6 @@ using std::stringstream;
 #define EMPTY ""
 
 // Declaración de la función para manejar la solicitud GET
-void get_request(int socket_id, HTTPRequestParse request);
+void get_request(int socket_id, HTTPRequestParse request, Server server);
 
 #endif // GET_REQUEST_HPP

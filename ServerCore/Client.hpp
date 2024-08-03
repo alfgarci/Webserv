@@ -4,6 +4,7 @@
 #include "Server.hpp"
 #include "../HTTPRequestParse/HTTPRequestParse.hpp"
 #include "../HTTPRequestCreator/HTTPRequestCreator.hpp"
+#include "../get_request/get_request.hpp"
 #include <iostream>
 #include <string>
 #include <fstream>

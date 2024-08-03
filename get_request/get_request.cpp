@@ -1,7 +1,16 @@
 #include "get_request.hpp"
 
+int stringToInt(const std::string& str)
+{
+    std::istringstream iss(str);
+    int result;
+
+    iss >> result;
+    return (result);
+}
+
 // Function to handle the GET request
-void get_request(int socket_id, HTTPRequestParse request)
+void get_request(int socket_id, HTTPRequestParse request, Server server)
 {
     void *content;
     FILE *file;
@@ -17,11 +26,18 @@ void get_request(int socket_id, HTTPRequestParse request)
     string host = request.getField(HTTPRequestParse::HOST);
     string path = request.getField(HTTPRequestParse::PATH);
     string port = request.getField(HTTPRequestParse::PORT);
+    int intPort = stringToInt(port);
+
+    if (server.getIp() != host)
+        message << NOT_VALID_HOST;
+
+    std::list<int>::iterator it_1 = std::find(server.getPorts().begin(), server.getPorts().end(), intPort);
+
+    if (it_1 == server.getPorts().end())
+        message << WRONG_PORT << port << DOUBLE_LINE_BREAK;
 
     if (path.find("..") != string::npos)
         message << PATH_VALIDATION_ERROR;
-    else if (host != EXPECTED_HOST)
-        message << NOT_VALID_HOST;
     else if (port != EXPECTED_PORT)
         message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
     else if (!handle_cgi_request(path, "", message))

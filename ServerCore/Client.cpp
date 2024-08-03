@@ -30,10 +30,9 @@ void	Client::makeResponse()
 {
 	HTTPRequestCreator	response;
 
-	/*
 	if (_parse_request.getField(HTTPRequestParse::METHOD) == "GET" )
 		get_request(_socket_client, _parse_request, _host_server);
-	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "POST" )
+/*	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "POST" )
 		post_request(_socket_client, _parse_request, _host_server);
 	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "DELETE" )
 		//delete_request(_socket_client, _parse_request);
