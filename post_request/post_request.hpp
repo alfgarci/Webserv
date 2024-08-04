@@ -8,10 +8,13 @@
 #include <sstream>
 #include <unistd.h>
 #include "../send_cgi_handle/send_cgi_handle.hpp"
+#include "../ServerCore/Server.hpp"
+# include "../libs/to_int.hpp"
 
 using std::cerr;
 using std::string;
 using std::stringstream;
+using std::list;
 
 // Server configuration
 #define EXPECTED_HOST "www.example.com"
@@ -19,7 +22,7 @@ using std::stringstream;
 #define CGI_DIR "/path/to/cgi-bin/" // Asegúrate de que esta definición coincida con la de cgi_handle.hpp
 
 // Normal functioning messages
-#define CONNECTION "Connection: keep-alive\n\n"
+#define CONNECTION_KEEP_REQUEST "Connection: keep-alive\n\n"
 #define OK "HTTP/1.1 200 OK\n\n"
 #define DATA_PROC "Data processed successfully\n"
 
@@ -41,6 +44,6 @@ using std::stringstream;
 #define EMPTY ""
 
 // Declaraciones de funciones
-void post_request(int socket_id, HTTPRequestParse request);
+void post_request(int socket_id, HTTPRequestParse request, Server server);
 
 #endif // POST_REQUEST_HPP

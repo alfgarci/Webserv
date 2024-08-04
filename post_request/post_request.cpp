@@ -1,7 +1,7 @@
 #include "post_request.hpp"
 
 // Function to handle the POST request
-void post_request(int socket_id, HTTPRequestParse request)
+void post_request(int socket_id, HTTPRequestParse request, Server server)
 {
     FILE *file;
     size_t itemsWritten;
@@ -9,31 +9,45 @@ void post_request(int socket_id, HTTPRequestParse request)
     //ssize_t bytes_sent;
     //int send_attempts = 0;
     //const int MAX_SEND_ATTEMPTS = 3;
+    int intPort;
+    std::list<t_route> routes;
+
     file = NULL;
     string host = request.getField(HTTPRequestParse::HOST);
     string path = request.getField(HTTPRequestParse::PATH);
     string port = request.getField(HTTPRequestParse::PORT);
     string body = request.getField(HTTPRequestParse::BODY);
 
-    // Intenta manejar la solicitud como CGI si el path es correcto
-    if (path.find(CGI_DIR) == 0)
+     // port is a string, convert it to int
+    intPort = to_int(port);
+
+    // iterator to find the port in the list of ports
+    std::list<int>::iterator it_1 = std::find(server.getPorts().begin(), server.getPorts().end(), intPort);
+    // Intialize the routes list
+    routes = server.getLocations();
+    // iterator to find the path in the list of routes
+    std::list<t_route>::iterator it_2 = routes.begin();
+
+    while (it_2 != routes.end())
     {
-        if (handle_cgi_request(path, body, message)) {
-            // La solicitud CGI fue manejada exitosamente
-            // Envía la respuesta al cliente
-            send_response(socket_id, message.str());
-            return; // Termina el manejo de la solicitud
-        }
-        // Si el manejo de CGI falla, continúa para intentar manejar como una operación de archivo
+        if (it_2->search_dir == path)
+            break;
+        it_2++;
     }
 
-    // Validación básica del path
-    if (path.find("..") != string::npos)
-        message << PATH_VALIDATION_ERROR;
-    else if (host != EXPECTED_HOST)
+    // Check if port is valid
+    if (it_1 == server.getPorts().end())
+        message << WRONG_PORT << port << DOUBLE_LINE_BREAK;
+    // Check if hosts is valid
+    else if (server.getIp() != host)
+    {
+        cout << "\033[0;31m" << "HOST RECUPERADO " << server.getIp() << "\n\033[0m" << endl;       
         message << NOT_VALID_HOST;
-    else if (port != EXPECTED_PORT)
-        message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
+    }    
+    // Check if path is valid
+    else if (it_2 == routes.end())
+        message << PATH_VALIDATION_ERROR;
+  
     else
     {
         file = fopen(path.c_str(), WRITE_BINARY);

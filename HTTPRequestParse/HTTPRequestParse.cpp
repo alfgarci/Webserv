@@ -107,6 +107,7 @@ void HTTPRequestParse::parse(const string& request)
         // Method is set
         setField(METHOD, method);
         // Path is set
+        path = "." + path;
         setField(PATH, path);
         // HTTP versión is set
         setField(HTTP_VERSION, httpVersion);
@@ -137,7 +138,10 @@ void HTTPRequestParse::parse(const string& request)
                 {
                     // If ':' is found we assume there is a port
                     // Host and port are stablished
-                    setField(HOST, fieldValue.substr(0, colonPos));
+                    if (fieldValue.substr(0, colonPos) == "localhost")
+                        setField(HOST, "127.0.0.1");
+                    else    
+                        setField(HOST, fieldValue.substr(0, colonPos));
                     fieldFound[HOST] = true;
                     setField(PORT, fieldValue.substr(colonPos + 1));
                     if (fieldValues[PORT].empty())
