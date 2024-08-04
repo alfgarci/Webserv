@@ -20,9 +20,9 @@ using std::vector;
 class ServerCore
 {
 	private:
-		vector<Server>		_servers;
-		map<int, Server>	_servers_fd_map;
-		map<int, Client>	_client_map;
+		vector<Server>			_servers;
+		map<int, Server>		_servers_fd_map;
+		map<int, Client>		_client_map;
 		fd_set					_recv_pool;
 		fd_set					_wrt_pool;
 		int						_max_fd;

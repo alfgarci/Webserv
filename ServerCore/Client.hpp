@@ -17,12 +17,11 @@ using std::string;
 class Client
 {
 private:
-	int			_socket_client;
-	string		_request;
-	Server		_host_server;
-	int			_request_bytes_read;
-	bool		_parse_finish;
-
+	int					_socket_client;
+	string				_request;
+	Server				_host_server;
+	int					_request_bytes_read;
+	bool				_parse_finish;
 	HTTPRequestParse	_parse_request;
 	string				_response;
 
