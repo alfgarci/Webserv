@@ -18,15 +18,15 @@ class Server
 private:
 
 	list<Socket>				_main_socket;
-	list<int>				_socket_fd;
+	list<int>					_socket_fd;
 	string						_ip;
-	list<int>				_port;
+	list<int>					_port;
 	string						_name;
 	int							_client_limit_body_size;
 	string						_root;
 	string						_index;
 	bool						_auto_index;
-	list<t_route>			_locations;
+	list<t_route>				_locations;
 
 public:
 

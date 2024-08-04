@@ -4,6 +4,8 @@
 #include "Server.hpp"
 #include "../HTTPRequestParse/HTTPRequestParse.hpp"
 #include "../HTTPRequestCreator/HTTPRequestCreator.hpp"
+#include "../get_request/get_request.hpp"
+#include "../post_request/post_request.hpp"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -15,12 +17,11 @@ using std::string;
 class Client
 {
 private:
-	int			_socket_client;
-	string		_request;
-	Server		_host_server;
-	int			_request_bytes_read;
-	bool		_parse_finish;
-
+	int					_socket_client;
+	string				_request;
+	Server				_host_server;
+	int					_request_bytes_read;
+	bool				_parse_finish;
 	HTTPRequestParse	_parse_request;
 	string				_response;
 

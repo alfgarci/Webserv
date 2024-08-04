@@ -42,7 +42,8 @@ echo "$(tput setaf 9)"
 read foo
 
 # Prueba 6
-echo "$(tput setaf 10)Prueba 6 (mayúsculas y minúsculas en el nombre del campo connection, puerto 433)<: ./webserv \"GET /index.html HTTP/1.1\r\nHOST: www.example.com:433\r\ncOnNeCtIoN: keep-alive\r\n\""
+echo "$(tput setaf 10)ls
+Prueba 6 (mayúsculas y minúsculas en el nombre del campo connection, puerto 433)<: ./webserv \"GET /index.html HTTP/1.1\r\nHOST: www.example.com:433\r\ncOnNeCtIoN: keep-alive\r\n\""
 echo "$(tput setaf 9)"
 ./webserv $'GET /index.html HTTP/1.1\r\nHOST: www.example.com:433\r\ncOnNeCtIoN: keep-alive\r\n'
 read foo
