@@ -18,4 +18,8 @@ void	ServerInfo::store_server(string s, t_server &server_struct)
 	{
 		server_struct.body_size_limit = atoi(get_line_content(s).c_str());
 	}
+	if (check_for_keyword(s, Server_dictionary.at(search_dir_server)))
+	{
+		server_struct.search_dir = get_line_content(s);
+	}
 }
