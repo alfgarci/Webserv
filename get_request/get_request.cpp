@@ -17,29 +17,46 @@ void get_request(int socket_id, HTTPRequestParse request, Server server)
     size_t length;
     size_t itemsRead;
     stringstream message;
-    //ssize_t bytes_sent;
     int send_attempts;
+    int intPort;
+    std::list<t_route> routes;
+    //ssize_t bytes_sent;
     //const int MAX_SEND_ATTEMPTS = 3;
 
+    // Send attempts initialized to 0
     send_attempts = 0;
 
+    // Get the host, path and port from the request
     string host = request.getField(HTTPRequestParse::HOST);
     string path = request.getField(HTTPRequestParse::PATH);
     string port = request.getField(HTTPRequestParse::PORT);
-    int intPort = stringToInt(port);
 
-    if (server.getIp() != host)
-        message << NOT_VALID_HOST;
+     // port is a string, convert it to int
+    intPort = stringToInt(port);
 
+    // iterator to find the port in the list of ports
     std::list<int>::iterator it_1 = std::find(server.getPorts().begin(), server.getPorts().end(), intPort);
+    
+    // Intialize the routes list
+    routes = server.getLocations();
+    // iterator to find the path in the list of routes
+    std::list<t_route>::iterator it_2 = routes.begin();
+    while (it_2 != routes.end())
+    {
+        if (it_2->search_dir == path)
+            break;
+        it_2++;
+    }
 
+    // Check if port is valid
     if (it_1 == server.getPorts().end())
         message << WRONG_PORT << port << DOUBLE_LINE_BREAK;
-
-    if (path.find("..") != string::npos)
+    // Check if hosts is valid
+    else if (server.getIp() != host)
+        message << NOT_VALID_HOST;
+    // Check if path is valid
+    else if (it_2 == routes.end())
         message << PATH_VALIDATION_ERROR;
-    else if (port != EXPECTED_PORT)
-        message << WRONG_PORT << EXPECTED_PORT << DOUBLE_LINE_BREAK;
     else if (!handle_cgi_request(path, "", message))
 	{
 		// Try to handle as CGI request first
