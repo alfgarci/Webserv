@@ -10,7 +10,7 @@ Server::Server(t_server *info_server)
 	_ip = info_server->host;
 	_name = info_server->name;
 	_client_limit_body_size = info_server->body_size_limit;
-	_root = "/";
+	_root = info_server->search_dir;
 	_index = "index.html";
 	_auto_index = false;
 	_locations = info_server->routes;
