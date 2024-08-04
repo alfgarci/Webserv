@@ -6,6 +6,7 @@
 #include "../HTTPRequestCreator/HTTPRequestCreator.hpp"
 #include "../get_request/get_request.hpp"
 #include "../post_request/post_request.hpp"
+#include "../Response/Response.hpp"
 #include <iostream>
 #include <string>
 #include <fstream>

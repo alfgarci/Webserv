@@ -24,8 +24,8 @@ using std::stringstream;
 # define EXPECTED_PORT "80"
 
 // Normal functioning messages
-# define CONNECTION_KEEP_REQUEST "Connection: keep-alive\n\n"
-# define OK "HTTP/1.1 200 OK\n\n"
+# define CONNECTION_KEEP_REQUEST_GET "Connection: keep-alive\r\n"
+# define OK_GET "HTTP/1.1 200 OK\r\n"
 
 // Error messages
 # define FILE_CLOSE_ERROR "HTTP/1.1 500 Internal Server Error. Error: File close failed\n\n"

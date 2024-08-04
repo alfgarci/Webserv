@@ -22,12 +22,24 @@ HTTPRequestParse	Client::getParseRequest()
 
 void	Client::doParseRequest()
 {
+
+	Response res(_request, _host_server);
+	res.doParseRequest();
+	res.makeResponse();
+
+	cout << "-------------------------------------------"<< endl;
+	cout << res.getResponse() << endl;
+	cout << "-------------------------------------------"<< endl;
+	send_response(_socket_client, res.getResponse());
+
+	sleep(100000);
+	/*
 	_parse_request = HTTPRequestParse(_request);
 	get_request(_socket_client, _parse_request, _host_server);
 	//post_request(_socket_client, _parse_request, _host_server);
-	sleep(100000);
 
 	_parse_finish =	true;
+	*/
 }
 
 void	Client::makeResponse()
