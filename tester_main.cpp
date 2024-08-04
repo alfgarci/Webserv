@@ -87,7 +87,7 @@ void	test_ServerInfo(void)
 	t.test_store_file("tester/test_files/tricky_server.test", test_number, false);
 }
 
-# define RUN_TEST_INFO 1
+# define RUN_TEST_INFO 0
 # define RUN_TEST_HTTPRREQUESTPARSE 0
 # define RUN_TEST_HTTPRREQUESTCREATOR 0
 
@@ -100,16 +100,17 @@ int	main(int argc, char **argv)
 		test_HttpRequestParser(argc, argv);
 	if (RUN_TEST_INFO)
 	{
-        try
-        {
-            std::list<t_server> listServer = info.store_file(argv[1]);
-            ServerCore core(listServer);
-            core.prepareServer();
-            core.launchServers();
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+		test_ServerInfo();
+	}
+	try
+	{
+		std::list<t_server> listServer = info.store_file(argv[1]);
+		ServerCore core(listServer);
+		core.prepareServer();
+		core.launchServers();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
 	}
 }
