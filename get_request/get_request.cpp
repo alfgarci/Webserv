@@ -115,7 +115,7 @@ void get_request(int socket_id, HTTPRequestParse request, Server server)
 			else
 			{
 				message.str(EMPTY);
-				message << INTERNAL_SERVER_ERROR;
+				message << "HTTP/1.1 500 Internal Server Error\r\n";
 			}
 			if (fclose(file) != 0)
 			{

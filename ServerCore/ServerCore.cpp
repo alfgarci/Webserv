@@ -133,11 +133,14 @@ void	ServerCore::sendResponse(int fd, Client &client)
 
 	if (bytes_sent < 0)
 	{
-		std::cout << "Error al enviar" << std::endl;
+		std::cout << "EROOR AL ENVIAR" << std::endl;
 	}
 	else
 	{
-		std::cout << "STRING enviada: " << response << std::endl;
+		std::cout << "STRING enviada al socket: "<< fd << endl;
+		cout << "******************************************************"<< endl;
+		cout << response << endl;
+		cout << "******************************************************"<< endl;
 		//keep-alive
 		/*
 		GET /index.html HTTP/1.1
