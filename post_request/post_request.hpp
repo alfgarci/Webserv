@@ -30,7 +30,6 @@ using std::list;
 #define FILE_CLOSE_ERROR "HTTP/1.1 500 Internal Server Error. Error: File close failed\n\n"
 #define FILE_OPEN_ERROR "HTTP/1.1 500 Internal Server Error. Fail opening file\n\n"
 #define FILE_WRITE_ERROR "HTTP/1.1 500 Internal Server Error\n\nFail Writing file\n\n"
-#define INTERNAL_SERVER_ERROR "HTTP/1.1 500 Internal Server Error\n\n"
 #define NOT_VALID_HOST "HTTP/1.1 400 Bad Request. Error: Not valid host\n\n"
 #define WRONG_PORT "HTTP/1.1 400 Bad Request. Wrong Port: "
 #define PATH_VALIDATION_ERROR "HTTP/1.1 400 Bad Request. Error: Invalid Path\n\n"

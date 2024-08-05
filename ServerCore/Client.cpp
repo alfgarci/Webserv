@@ -22,26 +22,18 @@ HTTPRequestParse	Client::getParseRequest()
 
 void	Client::doParseRequest()
 {
-	_parse_request = HTTPRequestParse(_request);
-	get_request(_socket_client, _parse_request, _host_server);
-	//post_request(_socket_client, _parse_request, _host_server);
+
+	Response res(_request, _host_server);
+	res.doParseRequest();
+	res.makeResponse();
+	_response = res.getResponse();
+
+	/*
+	cout << "-------------------------------------------"<< endl;
+	cout << _response << endl;
+	cout << "-------------------------------------------"<< endl;
+	send_response(_socket_client, res.getResponse());
+
 	sleep(100000);
-
-	_parse_finish =	true;
-}
-
-void	Client::makeResponse()
-{
-	HTTPRequestCreator	response;
-	if (_parse_request.getField(HTTPRequestParse::METHOD) == "GET" )
-		get_request(_socket_client, _parse_request, _host_server);
-
-/*	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "POST" )
-		post_request(_socket_client, _parse_request, _host_server);
-	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "DELETE" )
-		//delete_request(_socket_client, _parse_request);
-	else
 	*/
-
-	//_response = response.createHTTPRequest()
 }

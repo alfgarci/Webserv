@@ -24,13 +24,12 @@ using std::stringstream;
 # define EXPECTED_PORT "80"
 
 // Normal functioning messages
-# define CONNECTION_KEEP_REQUEST "Connection: keep-alive\n\n"
-# define OK "HTTP/1.1 200 OK\n\n"
+# define CONNECTION_KEEP_REQUEST_GET "Connection: keep-alive\r\n"
+# define OK_GET "HTTP/1.1 200 OK\r\n"
 
 // Error messages
 # define FILE_CLOSE_ERROR "HTTP/1.1 500 Internal Server Error. Error: File close failed\n\n"
 # define FILE_NOT_FOUND "HTTP/1.1 404 Not Found\n\n"
-# define INTERNAL_SERVER_ERROR "HTTP/1.1 500 Internal Server Error\n\n"
 # define NOT_VALID_HOST "HTTP/1.1 400 Bad Request. Error: Not valid host\n\n"
 # define PARTIAL_READ_ERROR "HTTP/1.1 500 Internal Server Error. Error: Partial file read\n\n"
 # define READ_FILE_ERROR "HTTP/1.1 500 Internal Server Error. Error: Reading file\n\n"

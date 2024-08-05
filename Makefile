@@ -191,6 +191,17 @@ SERVERCORE_SRCS_CLASS = $(addsuffix .cpp, $(SERVERCORE_CLASS))
 SERVERCORE_SRCS = \
 	$(SERVERCORE_SRCS_CLASS) \
 
+#-------------------------------------------------------------------RESPONSE
+
+
+RESPONSE_DIR = Response
+
+RESPONSE_CLASS = Response
+RESPONSE_SRCS_CLASS = $(addsuffix .cpp, $(RESPONSE_CLASS))
+
+RESPONSE_SRCS = \
+	$(RESPONSE_SRCS_CLASS) \
+
 
 
 #-------------------------------------------------------------------SRCS
@@ -204,6 +215,7 @@ SRCS =	\
 		$(addprefix $(SEND_CGI_HANDLE_DIR)/, $(SEND_CGI_HANDLE_SRCS)) \
 		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
 		$(addprefix $(SERVERCORE_DIR)/, $(SERVERCORE_SRCS)) \
+		$(addprefix $(RESPONSE_DIR)/, $(RESPONSE_SRCS)) \
 		$(addsuffix .cpp, $(MAIN)) \
 
 #-------------------------------------------------------------------RULES
