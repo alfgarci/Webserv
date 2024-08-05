@@ -213,12 +213,17 @@ void HTTPRequestParse::parse(const string& request)
             if (*end != LINE_END || errno == ERANGE)
                 throw runtime_error(CONVERSION_ERROR);
             // Read body
+            string bodyTemp(length, 0);
+            iss.read(&bodyTemp[0], length);
+            setField(BODY, bodyTemp);
+            /*
             string bodyTemp;
             getline(iss, bodyTemp);
             // If \r is present it is erased
             if (!bodyTemp.empty() && bodyTemp[bodyTemp.size() - 1] == CR)
                 bodyTemp.erase(bodyTemp.size() - 1);
             setField(BODY, trim(bodyTemp));
+            */
             if (fieldValues[BODY].size() != length)
                 throw runtime_error(CONTENT_LENGHT_ERROR);
         }

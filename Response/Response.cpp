@@ -63,7 +63,8 @@ void	Response::handlePost()
 	cout << "+++++++++++++++++++++++++++++++++" << endl;
 	cout << contentType << endl;
 	cout << "+++++++++++++++++++++++++++++++++" << endl;
-
+	cout << body << endl;
+	cout << "+++++++++++++++++++++++++++++++++" << endl;
 }
 
 void	Response::handleDelete()
