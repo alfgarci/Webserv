@@ -6,12 +6,12 @@ Response::Response(string request_raw, Server server)
 	_server = server;
 }
 
-void    Response::doParseRequest()
+void	Response::doParseRequest()
 {
 	_request_parse = HTTPRequestParse(_request_raw);
 }
 
-void    Response::makeResponse()
+void	Response::makeResponse()
 {
 	if (_request_parse.getField(HTTPRequestParse::METHOD) == "GET")
 	{
@@ -54,17 +54,126 @@ void	Response::handlePost()
 		return ;
 	}
 	//procesar el cuerpo de la solicitud
-    if (body.empty())
-    {
-        _response << parseErrorPage("400");
-        _response_code = 400;
-        return;
-    }
+	if (body.empty())
+	{
+		_response << parseErrorPage("400");
+		_response_code = 400;
+		return;
+	}
+
+	if (contentType.find("multipart/form-data") != std::string::npos)
+	{
+		handleMultipartFormData(body, contentType, path);
+		_response << FILE_UPLOAD_SUCCESS;
+		_response_code = 200;
+	}
+	else
+	{
+
+	}
+
+	/*
 	cout << "+++++++++++++++++++++++++++++++++" << endl;
 	cout << contentType << endl;
 	cout << "+++++++++++++++++++++++++++++++++" << endl;
 	cout << body << endl;
 	cout << "+++++++++++++++++++++++++++++++++" << endl;
+	*/
+}
+
+void processSinglePart(const std::string &body, const std::string &boundary, const std::string &path)
+{
+    // Encontrar el inicio de la parte (después del boundary)
+    size_t startPos = body.find(boundary);
+    if (startPos == std::string::npos) {
+        std::cerr << "Boundary no encontrado en el cuerpo de la solicitud." << std::endl;
+        return;
+    }
+    startPos += boundary.length() + 2; // Moverse después del boundary y CRLF
+
+    // Encontrar el final de la parte
+    size_t endPos = body.find(boundary, startPos);
+    if (endPos == std::string::npos) {
+        endPos = body.length();
+    }
+
+    std::string part = body.substr(startPos, endPos - startPos);
+
+	cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||" << endl;
+	cout << part;
+	cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||" << endl;
+
+    std::istringstream partStream(part);
+    std::string line;
+    std::string filename;
+    std::string contentDisposition;
+    std::string contentType;
+    std::vector<char> content;
+
+    // Leer encabezados de la parte
+    while (std::getline(partStream, line) && !line.empty())
+	{
+        if (line.find("Content-Disposition:") != std::string::npos)
+		{
+            contentDisposition = line;
+            size_t filenamePos = line.find("filename=\"");
+            if (filenamePos != std::string::npos)
+			{
+                size_t start = filenamePos + 10;
+                size_t end = line.find("\"", start);
+                filename = line.substr(start, end - start);
+            }
+        }
+		else if (line.find("Content-Type:") != std::string::npos){
+            contentType = line;
+        }
+    }
+
+    // Saltar la línea en blanco después de los encabezados
+    std::getline(partStream, line);
+
+    // Leer el contenido del archivo de forma binaria
+    std::copy(std::istreambuf_iterator<char>(partStream),
+              std::istreambuf_iterator<char>(),
+              std::back_inserter(content));
+
+    // Si hay un archivo, guardarlo
+    if (!filename.empty()) {
+        std::ofstream outFile(path + filename, std::ios::binary);
+        if (outFile.is_open()) {
+            outFile.write(content.data(), content.size());
+            outFile.close();
+            std::cout << "Archivo guardado: " << filename << std::endl;
+            std::cout << "Ruta guardado: " << path + filename << std::endl;
+        } else {
+            std::cerr << "Error al abrir el archivo para escribir: " << filename << std::endl;
+        }
+    } else {
+        std::cerr << "No se pudo encontrar el nombre del archivo en el cuerpo de la solicitud." << std::endl;
+    }
+}
+
+string	extractBoundary(const std::string &contentType)
+{
+	std::string boundaryPrefix = "boundary=";
+	size_t boundaryPos = contentType.find(boundaryPrefix);
+	if (boundaryPos != std::string::npos)
+	{
+		return "--" + contentType.substr(boundaryPos + boundaryPrefix.length());
+	}
+	return ""; // Devolver una cadena vacía si no se encuentra el boundary
+}
+
+void Response::handleMultipartFormData(std::string &body, std::string &contentType, std::string &path)
+{
+
+    std::string boundary = extractBoundary(contentType);
+    if (boundary.empty()) {
+        std::cerr << "Boundary no encontrado en el Content-Type." << std::endl;
+        return;
+    }
+
+    processSinglePart(body, boundary, path);
 }
 
 void	Response::handleDelete()
@@ -87,6 +196,7 @@ void	Response::handleGet()
 	}
 	else if (hasReadPermission(path) == false)
 	{
+		//cout << "AQUIIIII\n"; hay un error
 		_response << parseErrorPage("403");
 		_response_code = 403;
 		return ;
@@ -131,25 +241,26 @@ void	Response::handleGet()
 string	Response::generateFileResponse(string &path)
 {
 	ostringstream	response;
-    string	fileContent;
-    if (appendFileToString(path, fileContent))
-    {
-        response << "HTTP/1.1 200 OK\r\n";
-        response << "Content-Type: " << getContentType(path) << "\r\n";
-        response << "Content-Length: " << fileContent.size() << "\r\n\r\n";
-        response << fileContent;
-        _response_code = 200;
-    }
-    else
-    {
-        response << parseErrorPage("404");
-        _response_code = 404;
-    }
+	string	fileContent;
+	if (appendFileToString(path, fileContent))
+	{
+		response << "HTTP/1.1 200 OK\r\n";
+		response << "Content-Type: " << getContentType(path) << "\r\n";
+		response << "Content-Length: " << fileContent.size() << "\r\n\r\n";
+		response << fileContent;
+		_response_code = 200;
+	}
+	else
+	{
+		response << parseErrorPage("404");
+		_response_code = 404;
+	}
 	return response.str();
 }
 
 string	Response::parseErrorPage(string errorCode)
 {
+	
 	ostringstream	responseError;
 	//IMPORTANTEEEEEEE
 	//checkear que no tengo mis propias error pages
@@ -184,22 +295,22 @@ bool	Response::isValidRoute(string &path, list<t_route> locations, t_route &matc
 
 bool Response::hasReadPermission(string& path)
 {
-    struct stat info;
+	struct stat info;
 
-    if (stat(path.c_str(), &info) != 0)
-        return false;
+	if (stat(path.c_str(), &info) != 0)
+		return false;
 
-    return (info.st_mode & S_IRUSR) || (info.st_mode & S_IRGRP) || (info.st_mode & S_IROTH);
+	return (info.st_mode & S_IRUSR) || (info.st_mode & S_IRGRP) || (info.st_mode & S_IROTH);
 }
 
 bool	Response::hasWritePermission(string& path)
 {
-    struct stat info;
+	struct stat info;
 
-    if (stat(path.c_str(), &info) != 0)
-        return false;
+	if (stat(path.c_str(), &info) != 0)
+		return false;
 
-    return (info.st_mode & S_IWUSR) || (info.st_mode & S_IWGRP) || (info.st_mode & S_IWOTH);
+	return (info.st_mode & S_IWUSR) || (info.st_mode & S_IWGRP) || (info.st_mode & S_IWOTH);
 }
 
 bool	Response::isValidMethod(string &method)
