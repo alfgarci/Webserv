@@ -22,23 +22,12 @@ HTTPRequestParse	Client::getParseRequest()
 
 void	Client::doParseRequest()
 {
-	_parse_request = HTTPRequestParse(_request);
-	_parse_finish =	true;
-}
 
-void	Client::makeResponse()
-{
-	HTTPRequestCreator	response;
+	Response res(_request, _host_server);
+	res.doParseRequest();
+	res.makeResponse();
+	_isKeepAlive = res.isKeepAlive();
+	_response = res.getResponse();
+	_response_code = res.getResponseCode();
 
-	/*
-	if (_parse_request.getField(HTTPRequestParse::METHOD) == "GET" )
-		get_request(_socket_client, _parse_request, _host_server);
-	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "POST" )
-		post_request(_socket_client, _parse_request, _host_server);
-	else if (_parse_request.getField(HTTPRequestParse::METHOD) == "DELETE" )
-		//delete_request(_socket_client, _parse_request);
-	else
-	*/
-
-	//_response = response.createHTTPRequest()
 }

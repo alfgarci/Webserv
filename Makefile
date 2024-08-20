@@ -134,16 +134,15 @@ HTTPREQUESTPARSE_SRCS = \
 	$(HTTPREQUESTPARSE_SRCS_CLASS) \
 
 
-#-------------------------------------------------------------------HTTPREQUESTCREATOR
+#-------------------------------------------------------------------SEND_CGI_HANDLE
 
+SEND_CGI_HANDLE_DIR = send_cgi_handle
 
-HTTPREQUESTCREATOR_DIR = HTTPRequestCreator
+SEND_CGI_HANDLE_CLASS = send_cgi_handle
+SEND_CGI_HANDLE_SRCS_CLASS = $(addsuffix .cpp, $(SEND_CGI_HANDLE_CLASS))
 
-HTTPREQUESTCREATOR_CLASS = HTTPRequestCreator
-HTTPREQUESTCREATOR_SRCS_CLASS = $(addsuffix .cpp, $(HTTPREQUESTCREATOR_CLASS))
-
-HTTPREQUESTCREATOR_SRCS = \
-	$(HTTPREQUESTCREATOR_SRCS_CLASS) \
+SEND_CGI_HANDLE_SRCS = \
+	$(SEND_CGI_HANDLE_SRCS_CLASS) \
 
 #-------------------------------------------------------------------SERVERCORE
 
@@ -162,6 +161,17 @@ SERVERCORE_SRCS_CLASS = $(addsuffix .cpp, $(SERVERCORE_CLASS))
 SERVERCORE_SRCS = \
 	$(SERVERCORE_SRCS_CLASS) \
 
+#-------------------------------------------------------------------RESPONSE
+
+
+RESPONSE_DIR = Response
+
+RESPONSE_CLASS = Response
+RESPONSE_SRCS_CLASS = $(addsuffix .cpp, $(RESPONSE_CLASS))
+
+RESPONSE_SRCS = \
+	$(RESPONSE_SRCS_CLASS) \
+
 
 
 #-------------------------------------------------------------------SRCS
@@ -169,9 +179,10 @@ SERVERCORE_SRCS = \
 SRCS =	\
 		$(addprefix $(SERVER_INFO_DIR)/, $(SERVER_INFO_SRCS)) \
 		$(addprefix $(HTTPREQUESTPARSE_DIR)/, $(HTTPREQUESTPARSE_SRCS)) \
-		$(addprefix $(HTTPREQUESTCREATOR_DIR)/, $(HTTPREQUESTCREATOR_SRCS)) \
+		$(addprefix $(SEND_CGI_HANDLE_DIR)/, $(SEND_CGI_HANDLE_SRCS)) \
 		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
 		$(addprefix $(SERVERCORE_DIR)/, $(SERVERCORE_SRCS)) \
+		$(addprefix $(RESPONSE_DIR)/, $(RESPONSE_SRCS)) \
 		$(addsuffix .cpp, $(MAIN)) \
 
 #-------------------------------------------------------------------RULES
