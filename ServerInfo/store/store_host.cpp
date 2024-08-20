@@ -60,6 +60,8 @@ string	ServerInfo::store_host(string s)
 	conversion_value = IPV4_CONVERSION_VALUE;
 	while (it != content.end())
 	{
+		if (check_overflow(content))
+			throw(std::logic_error(ERROR_OVERFLOW_GENERIC));
 		tmp_value = atoi(content.c_str());
 		check_limits(tmp_value);
 		while (it != content.end() && *it != '.')

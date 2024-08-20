@@ -4,7 +4,7 @@ server:
 	port=8001
 	server_name=prueba1
 	search_dir=./
-	body_limit=104801
+	body_limit=10480144
 	route:
 		accepted_http_methods=GET
 		accepted_http_methods=POST
@@ -14,5 +14,21 @@ server:
 		dir_listen=true
 
 	error_page:
+		code=400
+		path=./errorPages/400.html
+
+	error_page:
+		code=403
+		path=./errorPages/403.html
+
+	error_page:
 		code=404
 		path=./errorPages/404.html
+
+	error_page:
+		code=405
+		path=./errorPages/405.html
+
+	error_page:
+		code=500
+		path=./errorPages/500.html

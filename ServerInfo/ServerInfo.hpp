@@ -11,6 +11,7 @@
 
 # include "keywords.hpp"
 # include "structs.hpp"
+# include "../libs/check_overflow.hpp"
 # ifndef TO_STRING_HPP
 #  include "../libs/to_string.hpp"
 # endif
@@ -45,6 +46,7 @@ access to the file, and if the file exist, thanks ^^."
 # define ERROR_DUPLICATED_HTTP_METHODS "There are duplicated http methods"
 # define ERROR_OVERFLOW_IN_IP_DEFINITION "OVERFLOW in ip definition"
 # define ERROR_ILLEGAL_TOKEN "Illegal token in ip definition"
+# define ERROR_OVERFLOW_GENERIC "There is an overflow"
 
 # define BYTE 8
 # define IPV4_CONVERSION_VALUE 24
