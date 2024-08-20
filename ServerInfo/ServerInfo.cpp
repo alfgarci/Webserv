@@ -55,6 +55,7 @@ void	ServerInfo::print_t_server(t_server	&serv)
 	list<t_route>::iterator	route_it;
 	list<t_CGI>::iterator	CGI_it;
 	list<string>::iterator	methods_it;
+	list<t_error>::iterator	error_it;
 
 	port_it = serv.port.begin();
 	route_it = serv.routes.begin();
@@ -90,6 +91,14 @@ void	ServerInfo::print_t_server(t_server	&serv)
 			methods_it++;
 		}
 		route_it++;
+	}
+	error_it = serv.error_page.begin();
+	while (error_it != serv.error_page.end())
+	{
+		cout << KEYWORD_ERROR_PAGE << TOKEN_INDENTATION << endl;
+		cout << KEYWORD_ERROR_CODE << TOKEN_ASSIGNMENT << error_it->code << endl;
+		cout << KEYWORD_ERROR_PATH_TO_FILE << TOKEN_ASSIGNMENT << error_it->path << endl; 
+		error_it++;
 	}
 }
 
