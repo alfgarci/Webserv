@@ -53,6 +53,12 @@ void	Response::handlePost()
 		_response_code = 405;
 		return ;
 	}
+	else if (body.size() > _server.get_limit_body_size())
+	{
+		_response << parseErrorPage("413");
+		_response_code = 413;
+		return ;
+	}
 	//procesar el cuerpo de la solicitud
 	if (body.empty())
 	{
@@ -60,7 +66,6 @@ void	Response::handlePost()
 		_response_code = 400;
 		return;
 	}
-
 	if (contentType.find("multipart/form-data") != std::string::npos)
 	{
 		handleMultipartFormData(body, contentType, routeRequest.http_redirections);
@@ -104,7 +109,7 @@ void processBody(const std::string &body, const std::string &boundary, const std
 	filename = body.substr(filename_start, filename_end - filename_start);
 
 	start = body.find("\r\n\r\n", filename_end) + 4;
-	end = body.find(boundary, start) - 4;
+	end = body.find(boundary, start) - 2;
 
 	file.open((path + "/" + filename).c_str(), std::ios::binary);
 	
@@ -183,7 +188,7 @@ void	Response::handleGet()
 	t_route	routeRequest;
 
 	//Comprobamos que la ruta sea accesible, que tengamos permisos y el metodo valido para esa ruta
-	if (isValidRoute(path, _server.getLocations(), routeRequest) == false)
+	if (isValidRoute(path, _server.getLocations(), routeRequest) == false || access(path.c_str(),F_OK))
 	{
 		_response << parseErrorPage("404");
 		_response_code = 404;
@@ -272,6 +277,8 @@ string	Response::parseErrorPage(string errorCode)
 		responseError << INTERNAL_SERVER_ERROR << INTERNAL_SERVER_ERROR_BODY;
 	else if (errorCode == "415")
 		responseError << UNSUPPORTED_MEDIA_TYPE_ERROR << UNSUPPORTED_MEDIA_TYPE_ERROR_BODY;
+	else if (errorCode == "413")
+		responseError << PAYLOAD_TOO_LARGE_ERROR << PAYLOAD_TOO_LARGE_ERROR_BODY;
 	
 	return responseError.str();
 }

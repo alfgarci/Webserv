@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include "../libs/to_string.hpp"
 
+# define BUFFER_SIZE 500000
+
 using std::string;
 using std::map;
 using std::list;
