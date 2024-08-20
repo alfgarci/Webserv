@@ -11,6 +11,7 @@ bool	ServerInfo::verify_no_defaults(list<t_server> &lst)
 	list<t_route>::iterator		route_it;
 	list<t_CGI>::iterator		CGI_it;
 	list<int>::iterator			port_it;
+	list<t_error>::iterator		error_it;
 
 	if (lst.empty())
 		return (false);
@@ -55,6 +56,15 @@ bool	ServerInfo::verify_no_defaults(list<t_server> &lst)
 			if (route_it->search_dir == DEFAULT_SEARCH_DIR)
 				route_it->search_dir = server_it->search_dir;
 			route_it++;
+		}
+		error_it = server_it->error_page.begin();
+		while (error_it != server_it->error_page.end())
+		{
+			if (error_it->code == DEFAULT_SERVER_ERROR_CODE)
+				return (false);
+			if (error_it->path == DEFAULT_SERVER_ERROR_PATH)
+				return (false);	
+			error_it++;
 		}
 		server_it++;
 	}

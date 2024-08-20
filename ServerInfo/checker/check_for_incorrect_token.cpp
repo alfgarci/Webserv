@@ -21,6 +21,7 @@ bool	ServerInfo::check_for_incorrect_token(string s)
 			!check_for_keyword(s, Base_dictionary.at(server))
 			&& !check_for_keyword(s, Server_dictionary.at(route))
 			&& !check_for_keyword(s, Route_dictionary.at(CGI))
+			&& !check_for_keyword(s, Server_dictionary.at(error_page))
 		)
 			flag = true;
 	}
@@ -31,6 +32,7 @@ bool	ServerInfo::check_for_incorrect_token(string s)
 			check_for_keyword(s, Base_dictionary.at(server))
 			|| check_for_keyword(s, Server_dictionary.at(route))
 			|| check_for_keyword(s, Route_dictionary.at(CGI))
+			|| check_for_keyword(s, Server_dictionary.at(error_page))
 		)
 			flag = true;
 	}

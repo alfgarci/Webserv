@@ -61,13 +61,16 @@ store_file \
 store_server \
 store_cgi \
 store_host \
+store_error \
 store_route \
-initiate_route \
 initiate_cgi \
+initiate_error \
+initiate_route \
 initiate_server \
 get_line_content \
 verify_no_defaults \
 verify_http_methods \
+select_store_method \
 
 
 SERVER_INFO_STORE_DIR = store/

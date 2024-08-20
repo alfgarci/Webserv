@@ -11,3 +11,7 @@ server:
 		http_redirections=./upload
 		default_file=./indexPages/index.html
 		dir_listen=true
+
+	error_page:
+		code=404
+		path=./errorPages/404.html
