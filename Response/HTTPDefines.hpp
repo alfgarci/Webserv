@@ -49,6 +49,15 @@
 											"<p>The server does not support the media type transmitted in the request.</p>" \
 											"</body></html>"
 
+//-----------------------------413-----------------------------
+#define PAYLOAD_TOO_LARGE_ERROR "HTTP/1.1 413 Payload Too Large\r\n" \
+                                "Content-Type: text/html\r\n\r\n"
+
+#define PAYLOAD_TOO_LARGE_ERROR_BODY "<html><body><h1>413 Payload Too Large</h1>" \
+                                     "<p>The request is too large for the server to process.</p>" \
+                                     "</body></html>"
+
+
 //-----------------------------200-----------------------------
 #define HTTP_SUCCESS	"HTTP/1.1 200 OK\r\n" \
 						"Content-Type: text/html\r\n\r\n"
