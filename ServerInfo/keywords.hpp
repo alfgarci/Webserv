@@ -25,6 +25,9 @@ typedef std::map<int, string> Dictionary;
 # define ACCEPTED_HTTP_METHODS_KEYWORD "accepted_http_methods"
 # define HTTP_REDIRECTIONS_KEYWORD "http_redirections"
 # define SEARCH_DIR_KEYWORD "search_dir"
+# define KEYWORD_ERROR_PAGE "error_page"
+# define KEYWORD_ERROR_CODE "code"
+# define KEYWORD_ERROR_PATH_TO_FILE "path"
 # define TOOGLE_DIR_LISTEN_KEYWORD "dir_listen"
 # define DEFAULT_FILE_TO_ANSWER_KEYWORD "default_file"
 # define CGI_KEYWORD "CGI"
@@ -43,7 +46,8 @@ enum e_server_keywords
 	server_name = 2,
 	body_limit = 3,
 	route = 4,
-	search_dir_server = 5
+	search_dir_server = 5,
+	error_page = 6
 };
 
 enum e_route_keywords
@@ -60,6 +64,12 @@ enum e_CGI_keywords
 {
 	file_targets = 0,
 	path_of_cgi = 1
+};
+
+enum e_error_page_keywords
+{
+	error_code = 0,
+	path_to_error = 1
 };
 
 class DictionaryCreator
@@ -82,6 +92,7 @@ class DictionaryCreator
 			d[body_limit] = CLIENT_BODY_LIMIT_KEYWORD;
 			d[route] = ROUTE_KEYWORD;
 			d[search_dir_server] = SEARCH_DIR_KEYWORD;
+			d[error_page] = KEYWORD_ERROR_PAGE;
 			return (d);
 		}
 		static Dictionary create_route_dict()
@@ -104,19 +115,29 @@ class DictionaryCreator
 			d[path_of_cgi] = PATH_OF_CGI;
 			return (d);
 		}
+		static Dictionary create_error_page_dict()
+		{
+			Dictionary	d;
+
+			d[error_code] = KEYWORD_ERROR_CODE;
+			d[path_to_error] = KEYWORD_ERROR_PATH_TO_FILE;
+			return (d);
+		}
 };
 
 static const Dictionary Base_dictionary = DictionaryCreator::create_base_dict();
 static const Dictionary Server_dictionary = DictionaryCreator::create_server_dict();
 static const Dictionary Route_dictionary = DictionaryCreator::create_route_dict();
 static const Dictionary CGI_dictionary = DictionaryCreator::create_CGI_dict();
+static const Dictionary error_pages_dictionary = DictionaryCreator::create_error_page_dict();
 
 enum e_indentation_level_keywords
 {
 	base_level = 0,
 	server_level = 1,
 	route_level = 2,
-	cgi_level = 3
+	cgi_level = 3,
+	error_level = 4
 };
 
 class IndentationCreator
@@ -130,6 +151,7 @@ class IndentationCreator
 			d[server_level] = Server_dictionary;
 			d[route_level] = Route_dictionary;
 			d[cgi_level] = CGI_dictionary;
+			d[error_level] = error_pages_dictionary;
 			return (d);
 		}
 };

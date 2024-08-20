@@ -24,6 +24,5 @@ void	ServerInfo::check_syntax(string s, int indentation_level, int line)
 			throw (std::logic_error(BAD_SYNTAX + to_string(line)));
 		if (check_for_incorrect_token(s))
 			throw (std::logic_error(BAD_SYNTAX + to_string(line)));
-
 	}
 }

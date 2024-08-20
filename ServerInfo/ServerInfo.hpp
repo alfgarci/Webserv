@@ -36,7 +36,7 @@ using std::cerr;
 # define SERVERINFO_DESTRUCTOR_LOG "ServerInfo destructor called"
 
 # define ERROR_CANT_OPEN_FILE "Can't open file, check that you send the right route, i have the \
-access to the file, and that it exist, thanks ^^."
+access to the file, and if the file exist, thanks ^^."
 # define BAD_SYNTAX "Bad syntax at line: "
 # define BAD_INDENTATION "Bad indentation at line: "
 # define ERROR_NOT_ENOUGH_MEMORY "Memory reserve, fail, exiting."
@@ -59,12 +59,15 @@ access to the file, and that it exist, thanks ^^."
 # define DEFAULT_NAME ""
 # define DEFAULT_METHOD_GET "GET"
 # define DEFAULT_METHOD_POST "POST"
+# define DEFAULT_METHOD_DELETE "DELETE"
 # define DEFAULT_FILE_TO_ANSWER ""
 # define DEFAULT_DIR_TO_LISTEN ""
 # define DEFAULT_HTTP_REDI ""
 # define DEFAULT_SEARCH_DIR ""
 # define DEFAULT_CGI_TARGET ""
 # define DEFAULT_CGI_PATH ""
+# define DEFAULT_SERVER_ERROR_CODE 0
+# define DEFAULT_SERVER_ERROR_PATH ""
 
 # define TRUE_STRING "true"
 # define FALSE_STRING "false"
@@ -102,17 +105,21 @@ class ServerInfo
 		//STORE
 		//-------------------------------------------------------
 
+		static list<t_server>	store_file(string route); //THIS STORE EVERYTHING
 		static void				store_server(string s, t_server &server_struct);
 		static void				store_route(string s, t_server &server_struct);
 		static void				store_cgi(string s, t_server &server_struct);
 		static string			store_host(string s);
-		static list<t_server>	store_file(string route); //THIS STORE EVERYTHING
+		static void				store_error(string s, t_error &error);
 		static t_server			initiate_server();
 		static t_route			initiate_route();
 		static t_CGI			initiate_cgi();
+		static t_error			initiate_error();
 		static string			get_line_content(string line);
 		static bool				verify_no_defaults(list<t_server> &lst);
 		static bool				verify_http_methods(list<t_server> &lst);
+		static void				select_store_method(list<t_server> &lst_server,
+									int indentation_level, string s);
 
 		//-------------------------------------------------------
 		static void	print_t_server(t_server	&serv);
