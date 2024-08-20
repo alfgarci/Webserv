@@ -8,6 +8,7 @@ server:
 	route:
 		accepted_http_methods=GET
 		accepted_http_methods=POST
+		accepted_http_methods=DELETE
 		http_redirections=./upload
 		default_file=./indexPages/index.html
 		dir_listen=true
