@@ -59,18 +59,15 @@ void	ServerCore::launchServers()
 				if (FD_ISSET(i, &recv_tmp) && _servers_fd_map.count(i))
 				{
 					newConnection(_servers_fd_map.find(i)->second, i); //pasamos el server
-					std::cout << "NUEVO CLIENTE CONECTADO: " << i << std::endl;
+					std::cout << "New client connected: " << i << std::endl;
 				}
 				else if (FD_ISSET(i, &recv_tmp) && _client_map.count(i))
 				{
 					readRequest(i, _client_map[i]);
-					std::cout << "RECIBIENDO INFORMACION DEL CLIENTE: " << std::endl;
 				}
 				else if (FD_ISSET(i, &wrt_tmp) && _client_map.count(i))
 				{
 					sendResponse(i, _client_map[i]);
-					std::cout << "ENVIANDO INFORMACION AL CLIENTE: " << std::endl;
-					write(i, "ESTAS CONECTADO!", strlen("ESTAS CONECTADO!"));
 				}
 			}
 		}
@@ -127,7 +124,6 @@ void	ServerCore::readRequest(int fd, Client &client)
 	}
 	else
 	{
-		//timepo mesg cliente
 		std::cout << "He leido: " << std::string(requestData.begin(), requestData.end()) << std::endl;
 		client.setRequest(std::string(requestData.begin(), requestData.end()));
 		client.setRequestBytesRead(requestData.size());
@@ -135,8 +131,8 @@ void	ServerCore::readRequest(int fd, Client &client)
 		eraseFdSet(fd, _recv_pool);
 		addFdSet(fd, _wrt_pool);
 	}
-	//suponemo que esta bien la solicitud
 }
+
 
 void	ServerCore::sendResponse(int fd, Client &client)
 {
@@ -145,53 +141,24 @@ void	ServerCore::sendResponse(int fd, Client &client)
 
 	if (bytes_sent < 0)
 	{
-		std::cout << "EROOR AL ENVIAR" << std::endl;
+		std::cout << "ERROR AL ENVIAR" << std::endl;
+		closeConection(fd);
 	}
 	else
 	{
-		std::cout << "STRING enviada al socket: "<< fd << endl;
-		cout << "******************************************************"<< endl;
-		cout << response << endl;
-		cout << "******************************************************"<< endl;
-		//keep-alive
-		/*
-		GET /index.html HTTP/1.1
-		Host: www.example.com
-		Connection: keep-alive
-		...
-		*/
-		closeConection(fd);
+		std::cout << "Socket: "<< fd << endl;
+		std::cout << "STRING enviada al socket: "<< response << endl;
+		if (client.getKeepAlive() == false || client.getResponseCode())
+		{
+			closeConection(fd);
+		}
+		else
+		{
+			eraseFdSet(fd, _wrt_pool);
+			addFdSet(fd, _recv_pool);
+		}
 	}
-	
 }
-
-/*
-void sendErrorResponse(int clientSocket, int errorCode, const std::string& errorPage)
-{
-    std::ifstream file(errorPage.c_str());
-    if (!file) {
-        // En caso de que no se pueda abrir el archivo de error, enviar un mensaje
-        std::string response = "HTTP/1.1 " + to_string(errorCode) + " Error\r\n"
-                            	+ "Content-Type: text/plain\r\n"
-                            	+ "Content-Length: 0\r\n\r\n";
-        send(clientSocket, response.c_str(), response.size(), 0);
-        return;
-    }
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    std::string content = buffer.str();
-
-    // Crear la respuesta HTTP con la página de error
-    std::string response = "HTTP/1.1 " + to_string(errorCode) + " Error\r\n"
-                           "Content-Type: text/html\r\n"
-                           "Content-Length: " + to_string(content.size()) + "\r\n\r\n" +
-                           content;
-
-    //send(clientSocket, response.c_str(), response.size(), 0);
-}
-*/
-
 
 void	ServerCore::addFdSet(int fd, fd_set &set)
 {

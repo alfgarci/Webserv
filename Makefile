@@ -122,16 +122,6 @@ TESTER_SRCS = \
 	$(TESTER_IS_FUNS_SRCS) \
 	$(TESTER_STORE_SRCS) \
 
-#-------------------------------------------------------------------GET_REQUEST
-
-GET_REQUEST_DIR = get_request
-
-GET_REQUEST_CLASS = get_request
-GET_REQUEST_SRCS_CLASS = $(addsuffix .cpp, $(GET_REQUEST_CLASS))
-
-GET_REQUEST_SRCS = \
-	$(GET_REQUEST_SRCS_CLASS) \
-
 #-------------------------------------------------------------------HTTPREQUESTPARSE
 
 
@@ -143,26 +133,6 @@ HTTPREQUESTPARSE_SRCS_CLASS = $(addsuffix .cpp, $(HTTPREQUESTPARSE_CLASS))
 HTTPREQUESTPARSE_SRCS = \
 	$(HTTPREQUESTPARSE_SRCS_CLASS) \
 
-#-------------------------------------------------------------------HTTPREQUESTCREATOR
-
-
-HTTPREQUESTCREATOR_DIR = HTTPRequestCreator
-
-HTTPREQUESTCREATOR_CLASS = HTTPRequestCreator
-HTTPREQUESTCREATOR_SRCS_CLASS = $(addsuffix .cpp, $(HTTPREQUESTCREATOR_CLASS))
-
-HTTPREQUESTCREATOR_SRCS = \
-	$(HTTPREQUESTCREATOR_SRCS_CLASS) \
-
-#-------------------------------------------------------------------POST_REQUEST
-
-POST_REQUEST_DIR = post_request
-
-POST_REQUEST_CLASS = post_request
-POST_REQUEST_SRCS_CLASS = $(addsuffix .cpp, $(POST_REQUEST_CLASS))
-
-POST_REQUEST_SRCS = \
-	$(POST_REQUEST_SRCS_CLASS) \
 
 #-------------------------------------------------------------------SEND_CGI_HANDLE
 
@@ -209,9 +179,6 @@ RESPONSE_SRCS = \
 SRCS =	\
 		$(addprefix $(SERVER_INFO_DIR)/, $(SERVER_INFO_SRCS)) \
 		$(addprefix $(HTTPREQUESTPARSE_DIR)/, $(HTTPREQUESTPARSE_SRCS)) \
-		$(addprefix $(HTTPREQUESTCREATOR_DIR)/, $(HTTPREQUESTCREATOR_SRCS)) \
-		$(addprefix $(GET_REQUEST_DIR)/, $(GET_REQUEST_SRCS)) \
-		$(addprefix $(POST_REQUEST_DIR)/, $(POST_REQUEST_SRCS)) \
 		$(addprefix $(SEND_CGI_HANDLE_DIR)/, $(SEND_CGI_HANDLE_SRCS)) \
 		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
 		$(addprefix $(SERVERCORE_DIR)/, $(SERVERCORE_SRCS)) \

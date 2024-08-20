@@ -64,6 +64,7 @@ void	Response::handlePost()
 	if (contentType.find("multipart/form-data") != std::string::npos)
 	{
 		handleMultipartFormData(body, contentType, routeRequest.http_redirections);
+		_response << HTTP_SUCCESS;
 		_response << FILE_UPLOAD_SUCCESS;
 		_response_code = 200;
 	}
@@ -75,6 +76,7 @@ void	Response::handlePost()
 			outFile << body;
 			outFile.close();
 		}
+		_response << HTTP_SUCCESS;
 		_response << TEXT_UPLOAD_SUCCESS;
 		_response_code = 200;
 	}
@@ -121,7 +123,7 @@ string	extractBoundary(const std::string &contentType)
 	{
 		return "--" + contentType.substr(boundaryPos + boundaryPrefix.length());
 	}
-	return ""; // Devolver una cadena vacía si no se encuentra el boundary
+	return "";
 }
 
 void Response::handleMultipartFormData(std::string &body, std::string &contentType, std::string &path)
@@ -160,10 +162,10 @@ void	Response::handleDelete()
 		_response_code = 405;
 		return ;
 	}
-
 	//intentamos borrar
 	if (remove(path.c_str()) == 0)
 	{
+		_response << HTTP_SUCCESS;
 		_response << FILE_DELETE_SUCCESS;
 		_response_code = 200;
 	}
@@ -259,17 +261,17 @@ string	Response::parseErrorPage(string errorCode)
 	//checkear que no tengo mis propias error pages
 
 	if (errorCode == "400")
-		responseError << BAD_REQUEST_ERROR;
+		responseError << BAD_REQUEST_ERROR << BAD_REQUEST_ERROR_BODY;
 	else if (errorCode == "403")
-		responseError << FORBIDDEN_ERROR;
+		responseError << FORBIDDEN_ERROR << FORBIDDEN_ERROR_BODY;
 	else if (errorCode == "404")
-		responseError << NOT_FOUND_ERROR;
+		responseError << NOT_FOUND_ERROR << NOT_FOUND_ERROR_BODY;
 	else if (errorCode == "405")
-		responseError << METHOD_NOT_ALLOWED_ERROR;
+		responseError << METHOD_NOT_ALLOWED_ERROR << METHOD_NOT_ALLOWED_ERROR_BODY;
 	else if (errorCode == "500")
-		responseError << INTERNAL_SERVER_ERROR;
+		responseError << INTERNAL_SERVER_ERROR << INTERNAL_SERVER_ERROR_BODY;
 	else if (errorCode == "415")
-		responseError << UNSUPPORTED_MEDIA_TYPE_ERROR;
+		responseError << UNSUPPORTED_MEDIA_TYPE_ERROR << UNSUPPORTED_MEDIA_TYPE_ERROR_BODY;
 	
 	return responseError.str();
 }
@@ -279,7 +281,7 @@ bool	Response::isValidRoute(string &path, list<t_route> locations, t_route &matc
 	for (list<t_route>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
 		//verifica si la ruta solicitada (path) coinciide con alguna ruta de la configuracoion (http_redirections)
-		if (path.find(it->http_redirections) == 0)
+		if (path.find(it->http_redirections) == 0 || path == it->search_dir)
 		{
 			matchedRoute = *it;
 			return true;
@@ -444,4 +446,14 @@ bool	Response::appendFileToString(string& filePath, string& output)
 	output += oss.str(); //apendeaa el contenido al string de salida
 
 	return true;
+}
+
+bool	Response::isKeepAlive()
+{
+	string connection = _request_parse.getField(HTTPRequestParse::CONNECTION);
+	
+	if (connection.find("keep-alive") != std::string::npos)
+		return true;
+	else
+		return false;
 }
