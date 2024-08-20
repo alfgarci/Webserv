@@ -3,9 +3,6 @@
 #include "Socket.hpp"
 #include "Server.hpp"
 #include "../HTTPRequestParse/HTTPRequestParse.hpp"
-#include "../HTTPRequestCreator/HTTPRequestCreator.hpp"
-#include "../get_request/get_request.hpp"
-#include "../post_request/post_request.hpp"
 #include "../Response/Response.hpp"
 #include <iostream>
 #include <string>
@@ -22,7 +19,9 @@ private:
 	string				_request;
 	Server				_host_server;
 	int					_request_bytes_read;
+	int					_response_code;
 	bool				_parse_finish;
+	bool				_isKeepAlive;
 	HTTPRequestParse	_parse_request;
 	string				_response;
 
@@ -38,6 +37,8 @@ public:
 	void	setRequest(char buffer[], int size){ this->_request.append(buffer, size); };
 	void	setRequestBytesRead(int bytes_read) {this->_request_bytes_read = bytes_read; };
 	string	getResponse() { return _response; };
+	int		getResponseCode() { return _response_code; };
+	bool	getKeepAlive() { return _isKeepAlive; };
 	HTTPRequestParse	getParseRequest();
 
 	void	doParseRequest();
