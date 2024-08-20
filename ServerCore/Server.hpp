@@ -22,7 +22,7 @@ private:
 	string						_ip;
 	list<int>					_port;
 	string						_name;
-	int							_client_limit_body_size;
+	unsigned int				_client_limit_body_size;
 	string						_root;
 	string						_index;
 	bool						_auto_index;
@@ -40,6 +40,7 @@ public:
 	list<int>		getPorts() { return this->_port; };
 	string 			getIp() { return this->_ip; };
 	list<t_route>	getLocations() { return this->_locations; };
+	unsigned int	get_limit_body_size() {return this->_client_limit_body_size;};
 	~Server() { /* this->close(); */ }
 
 	void close();

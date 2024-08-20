@@ -99,38 +99,33 @@ void	ServerCore::newConnection(Server &server, int server_fd)
 
 void	ServerCore::readRequest(int fd, Client &client)
 {
-	char	buffer[50000];
-	vector<char> requestData;
-	int		bytes_read;
+	char			buffer[BUFFER_SIZE];
+	vector<char>	data;
+	
+	while (true)
+	{
+		memset(buffer, 0, BUFFER_SIZE);
 
-	while ((bytes_read = recv(fd, buffer, sizeof(buffer), 0)) > 0)
-	{
-		requestData.insert(requestData.end(), buffer, buffer + bytes_read);
-		memset(buffer, 0, sizeof(buffer));
+		ssize_t bytesRead = recv(fd, buffer, BUFFER_SIZE, 0);
 
-		if (bytes_read < static_cast<int>(sizeof(buffer)))
-        {
-            break;
-        }
+		if (bytesRead < 0)
+		{
+			std::cout << "Ha habido un error al leer" << std::endl;
+			break ;
+		}
+		else if (bytesRead == 0)
+		{
+			std::cout << "No se ha leido nada" << std::endl;
+			break ;
+		}
+		data.insert(data.end(), buffer, buffer + bytesRead);
 	}
-
-	if (bytes_read == 0)
-	{
-		std::cout << "No se ha leido nada" << std::endl;
-	}
-	else if (bytes_read < 0)
-	{
-		std::cout << "Ha habido un error al leer" << std::endl;
-	}
-	else
-	{
-		std::cout << "He leido: " << std::string(requestData.begin(), requestData.end()) << std::endl;
-		client.setRequest(std::string(requestData.begin(), requestData.end()));
-		client.setRequestBytesRead(requestData.size());
-		client.doParseRequest();
-		eraseFdSet(fd, _recv_pool);
-		addFdSet(fd, _wrt_pool);
-	}
+	client.setRequest(std::string(data.begin(), data.end()));
+	client.setRequestBytesRead(data.size());
+	client.doParseRequest();
+	eraseFdSet(fd, _recv_pool);
+	addFdSet(fd, _wrt_pool);
+	data.clear();
 }
 
 
