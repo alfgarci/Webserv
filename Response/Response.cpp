@@ -6,12 +6,12 @@ Response::Response(string request_raw, Server server)
 	_server = server;
 }
 
-void    Response::doParseRequest()
+void	Response::doParseRequest()
 {
 	_request_parse = HTTPRequestParse(_request_raw);
 }
 
-void    Response::makeResponse()
+void	Response::makeResponse()
 {
 	if (_request_parse.getField(HTTPRequestParse::METHOD) == "GET")
 	{
@@ -30,7 +30,7 @@ void    Response::makeResponse()
 void	Response::handlePost()
 {
 	string	path = _request_parse.getField(HTTPRequestParse::PATH);
-	string	method = _request_parse.getField(HTTPRequestParse::PATH);
+	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
 	string	body = _request_parse.getField(HTTPRequestParse::BODY);
 	string	contentType = _request_parse.getField(HTTPRequestParse::CONTENT_TYPE);
 	t_route	routeRequest;
@@ -41,41 +41,143 @@ void	Response::handlePost()
 		_response_code = 404;
 		return ;
 	}
-	else if (hasWritePermission(path) == false)
+	else if (hasWritePermission(routeRequest.http_redirections) == false)
 	{
 		_response << parseErrorPage("403");
 		_response_code = 403;
 		return ;
 	}
-	else if (isValidMethod(method) == false)
+	else if (isValidMethod(method, routeRequest.accepted_http_methods) == false)
 	{
 		_response << parseErrorPage("405");
 		_response_code = 405;
 		return ;
 	}
 	//procesar el cuerpo de la solicitud
-    if (body.empty())
-    {
-        _response << parseErrorPage("400");
-        _response_code = 400;
-        return;
-    }
-	cout << "+++++++++++++++++++++++++++++++++" << endl;
-	cout << contentType << endl;
-	cout << "+++++++++++++++++++++++++++++++++" << endl;
-	cout << body << endl;
-	cout << "+++++++++++++++++++++++++++++++++" << endl;
+	if (body.empty())
+	{
+		_response << parseErrorPage("400");
+		_response_code = 400;
+		return;
+	}
+
+	if (contentType.find("multipart/form-data") != std::string::npos)
+	{
+		handleMultipartFormData(body, contentType, routeRequest.http_redirections);
+		_response << FILE_UPLOAD_SUCCESS;
+		_response_code = 200;
+	}
+	else if (contentType.find("text/plain") != std::string::npos)
+	{
+		std::ofstream outFile((routeRequest.http_redirections + "/text_data.txt").c_str());
+		if (outFile.is_open())
+		{
+			outFile << body;
+			outFile.close();
+		}
+		_response << TEXT_UPLOAD_SUCCESS;
+		_response_code = 200;
+	}
+	else
+	{
+		_response << parseErrorPage("415");
+		_response_code = 400;
+	}
+}
+
+void processBody(const std::string &body, const std::string &boundary, const std::string &path)
+{
+	size_t start, end, filename_start, filename_end;
+	std::string filename;
+	std::ofstream file;
+
+	start = body.find("Content-Disposition");
+	
+	if (start == std::string::npos)
+		return;
+
+	filename_start = body.find("filename=\"", start) + 10;
+	filename_end = body.find("\"", filename_start);
+
+	filename = body.substr(filename_start, filename_end - filename_start);
+
+	start = body.find("\r\n\r\n", filename_end) + 4;
+	end = body.find(boundary, start) - 4;
+
+	file.open((path + "/" + filename).c_str(), std::ios::binary);
+	
+	if (!file.is_open())
+		return;
+
+	file.write(body.data() + start, end - start);
+	file.close();
+}
+
+string	extractBoundary(const std::string &contentType)
+{
+	std::string boundaryPrefix = "boundary=";
+	size_t boundaryPos = contentType.find(boundaryPrefix);
+	if (boundaryPos != std::string::npos)
+	{
+		return "--" + contentType.substr(boundaryPos + boundaryPrefix.length());
+	}
+	return ""; // Devolver una cadena vacía si no se encuentra el boundary
+}
+
+void Response::handleMultipartFormData(std::string &body, std::string &contentType, std::string &path)
+{
+
+	std::string boundary = extractBoundary(contentType);
+	if (boundary.empty()) {
+		std::cerr << "Boundary no encontrado en el Content-Type." << std::endl;
+		return;
+	}
+
+	processBody(body, boundary, path);
 }
 
 void	Response::handleDelete()
 {
+	string	path = _request_parse.getField(HTTPRequestParse::PATH);
+	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
+	t_route	routeRequest;
 
+	if (isValidRoute(path, _server.getLocations(), routeRequest) == false)
+	{
+		_response << parseErrorPage("404");
+		_response_code = 404;
+		return ;
+	}
+	else if (hasWritePermission(routeRequest.http_redirections) == false)
+	{
+		_response << parseErrorPage("403");
+		_response_code = 403;
+		return ;
+	}
+	else if (isValidMethod(method, routeRequest.accepted_http_methods) == false)
+	{
+		_response << parseErrorPage("405");
+		_response_code = 405;
+		return ;
+	}
+
+	//intentamos borrar
+	if (remove(path.c_str()) == 0)
+	{
+		_response << FILE_DELETE_SUCCESS;
+		_response_code = 200;
+	}
+	else
+	{
+		_response << parseErrorPage("500");
+		_response_code = 500;
+	}
 }
 
 void	Response::handleGet()
 {
 	string	path = _request_parse.getField(HTTPRequestParse::PATH);
-	string	method = _request_parse.getField(HTTPRequestParse::PATH);
+	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
 	t_route	routeRequest;
 
 	//Comprobamos que la ruta sea accesible, que tengamos permisos y el metodo valido para esa ruta
@@ -87,11 +189,12 @@ void	Response::handleGet()
 	}
 	else if (hasReadPermission(path) == false)
 	{
+		//cout << "AQUIIIII\n"; hay un error
 		_response << parseErrorPage("403");
 		_response_code = 403;
 		return ;
 	}
-	else if (isValidMethod(method) == false)
+	else if (isValidMethod(method, routeRequest.accepted_http_methods) == false)
 	{
 		_response << parseErrorPage("405");
 		_response_code = 405;
@@ -131,25 +234,26 @@ void	Response::handleGet()
 string	Response::generateFileResponse(string &path)
 {
 	ostringstream	response;
-    string	fileContent;
-    if (appendFileToString(path, fileContent))
-    {
-        response << "HTTP/1.1 200 OK\r\n";
-        response << "Content-Type: " << getContentType(path) << "\r\n";
-        response << "Content-Length: " << fileContent.size() << "\r\n\r\n";
-        response << fileContent;
-        _response_code = 200;
-    }
-    else
-    {
-        response << parseErrorPage("404");
-        _response_code = 404;
-    }
+	string	fileContent;
+	if (appendFileToString(path, fileContent))
+	{
+		response << "HTTP/1.1 200 OK\r\n";
+		response << "Content-Type: " << getContentType(path) << "\r\n";
+		response << "Content-Length: " << fileContent.size() << "\r\n\r\n";
+		response << fileContent;
+		_response_code = 200;
+	}
+	else
+	{
+		response << parseErrorPage("404");
+		_response_code = 404;
+	}
 	return response.str();
 }
 
 string	Response::parseErrorPage(string errorCode)
 {
+	
 	ostringstream	responseError;
 	//IMPORTANTEEEEEEE
 	//checkear que no tengo mis propias error pages
@@ -164,6 +268,8 @@ string	Response::parseErrorPage(string errorCode)
 		responseError << METHOD_NOT_ALLOWED_ERROR;
 	else if (errorCode == "500")
 		responseError << INTERNAL_SERVER_ERROR;
+	else if (errorCode == "415")
+		responseError << UNSUPPORTED_MEDIA_TYPE_ERROR;
 	
 	return responseError.str();
 }
@@ -172,8 +278,8 @@ bool	Response::isValidRoute(string &path, list<t_route> locations, t_route &matc
 {
 	for (list<t_route>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
-		//verifica si la ruta solicitada (path) coinciide con alguna ruta de la configuracoion (search_dir)
-		if (path.find(it->search_dir) == 0)
+		//verifica si la ruta solicitada (path) coinciide con alguna ruta de la configuracoion (http_redirections)
+		if (path.find(it->http_redirections) == 0)
 		{
 			matchedRoute = *it;
 			return true;
@@ -184,28 +290,35 @@ bool	Response::isValidRoute(string &path, list<t_route> locations, t_route &matc
 
 bool Response::hasReadPermission(string& path)
 {
-    struct stat info;
+	struct stat info;
 
-    if (stat(path.c_str(), &info) != 0)
-        return false;
+	if (stat(path.c_str(), &info) != 0)
+		return false;
 
-    return (info.st_mode & S_IRUSR) || (info.st_mode & S_IRGRP) || (info.st_mode & S_IROTH);
+	return (info.st_mode & S_IRUSR) || (info.st_mode & S_IRGRP) || (info.st_mode & S_IROTH);
 }
 
 bool	Response::hasWritePermission(string& path)
 {
-    struct stat info;
+	struct stat info;
 
-    if (stat(path.c_str(), &info) != 0)
-        return false;
+	if (stat(path.c_str(), &info) != 0)
+		return false;
 
-    return (info.st_mode & S_IWUSR) || (info.st_mode & S_IWGRP) || (info.st_mode & S_IWOTH);
+	return (info.st_mode & S_IWUSR) || (info.st_mode & S_IWGRP) || (info.st_mode & S_IWOTH);
 }
 
-bool	Response::isValidMethod(string &method)
+bool Response::isValidMethod(string &method, list<string> accepted_http_methods)
 {
-	(void)method;
-	return true;
+	for (std::list<std::string>::const_iterator it = accepted_http_methods.begin();
+		 it != accepted_http_methods.end(); ++it)
+	{
+		if (*it == method)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Response::isDirectory(string& path)

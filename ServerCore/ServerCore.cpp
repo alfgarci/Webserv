@@ -103,7 +103,19 @@ void	ServerCore::newConnection(Server &server, int server_fd)
 void	ServerCore::readRequest(int fd, Client &client)
 {
 	char	buffer[50000];
-	int		bytes_read = recv(fd, buffer, sizeof(buffer), 0);
+	vector<char> requestData;
+	int		bytes_read;
+
+	while ((bytes_read = recv(fd, buffer, sizeof(buffer), 0)) > 0)
+	{
+		requestData.insert(requestData.end(), buffer, buffer + bytes_read);
+		memset(buffer, 0, sizeof(buffer));
+
+		if (bytes_read < static_cast<int>(sizeof(buffer)))
+        {
+            break;
+        }
+	}
 
 	if (bytes_read == 0)
 	{
@@ -116,9 +128,9 @@ void	ServerCore::readRequest(int fd, Client &client)
 	else
 	{
 		//timepo mesg cliente
-		std::cout << "He leido: " << buffer << std::endl;
-		client.setRequest(buffer, bytes_read);
-		client.setRequestBytesRead(bytes_read);
+		std::cout << "He leido: " << std::string(requestData.begin(), requestData.end()) << std::endl;
+		client.setRequest(std::string(requestData.begin(), requestData.end()));
+		client.setRequestBytesRead(requestData.size());
 		client.doParseRequest();
 		eraseFdSet(fd, _recv_pool);
 		addFdSet(fd, _wrt_pool);

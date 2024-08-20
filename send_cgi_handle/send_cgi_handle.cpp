@@ -4,6 +4,8 @@ using std::string;
 using std::stringstream;
 using std::cerr;
 
+#include <unistd.h>
+
 // CGI directory
 #define CGI_DIR "/path/to/cgi-bin/"
 // Normal functioning messages

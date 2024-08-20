@@ -8,14 +8,12 @@ void get_request(int socket_id, HTTPRequestParse request, Server server)
 	size_t length;
 	size_t itemsRead;
 	stringstream message;
-	int send_attempts;
 	int intPort;
 	std::list<t_route> routes;
 	//ssize_t bytes_sent;
 	//const int MAX_SEND_ATTEMPTS = 3;
 
 	// Send attempts initialized to 0
-	send_attempts = 0;
 
 	// Get the host, path and port from the request
 	string host = request.getField(HTTPRequestParse::HOST);
