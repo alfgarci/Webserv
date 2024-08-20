@@ -4,6 +4,7 @@
 # include <fstream>
 # include <string>
 # include <sstream>
+# include <vector>
 # include <dirent.h>
 # include <filesystem>
 # include <sys/stat.h>
@@ -42,12 +43,26 @@
 							  "<p>The server encountered an internal error and could not complete your request.</p>" \
 							  "</body></html>"
 
+#define UNSUPPORTED_MEDIA_TYPE_ERROR "HTTP/1.1 415 Unsupported Media Type\r\n" \
+									 "Content-Type: text/html\r\n\r\n" \
+									 "<html><body><h1>415 Unsupported Media Type</h1>" \
+									 "<p>The server does not support the media type transmitted in the request.</p>" \
+									 "</body></html>"
+
 #define FILE_UPLOAD_SUCCESS "HTTP/1.1 200 OK\r\n" \
 							"Content-Type: text/html\r\n\r\n" \
 							"<html><body><h1>File uploaded successfully.</h1>" \
 							"</body></html>"
 
+#define TEXT_UPLOAD_SUCCESS "HTTP/1.1 200 OK\r\n" \
+							"Content-Type: text/html\r\n\r\n" \
+							"<html><body><h1>Text data submitted successfully.</h1>" \
+							"</body></html>"
 
+#define FILE_DELETE_SUCCESS "HTTP/1.1 200 OK\r\n" \
+							"Content-Type: text/html\r\n\r\n" \
+							"<html><body><h1>File deleted successfully.</h1>" \
+							"</body></html>"
 
 using std::string;
 
@@ -76,7 +91,7 @@ class Response
 		string	getResponse(){ return _response.str(); };
 
 		bool	isValidRoute(string &path, list<t_route> routes, t_route &matchedRoute);
-		bool	isValidMethod(string &method);
+		bool 	isValidMethod(string &method, list<string> accepted_http_methods);
 		bool	hasReadPermission(string& path);
 		bool 	hasWritePermission(string& path);
 

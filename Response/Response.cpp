@@ -30,7 +30,7 @@ void	Response::makeResponse()
 void	Response::handlePost()
 {
 	string	path = _request_parse.getField(HTTPRequestParse::PATH);
-	string	method = _request_parse.getField(HTTPRequestParse::PATH);
+	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
 	string	body = _request_parse.getField(HTTPRequestParse::BODY);
 	string	contentType = _request_parse.getField(HTTPRequestParse::CONTENT_TYPE);
 	t_route	routeRequest;
@@ -41,13 +41,13 @@ void	Response::handlePost()
 		_response_code = 404;
 		return ;
 	}
-	else if (hasWritePermission(path) == false)
+	else if (hasWritePermission(routeRequest.http_redirections) == false)
 	{
 		_response << parseErrorPage("403");
 		_response_code = 403;
 		return ;
 	}
-	else if (isValidMethod(method) == false)
+	else if (isValidMethod(method, routeRequest.accepted_http_methods) == false)
 	{
 		_response << parseErrorPage("405");
 		_response_code = 405;
@@ -63,94 +63,54 @@ void	Response::handlePost()
 
 	if (contentType.find("multipart/form-data") != std::string::npos)
 	{
-		handleMultipartFormData(body, contentType, path);
+		handleMultipartFormData(body, contentType, routeRequest.http_redirections);
 		_response << FILE_UPLOAD_SUCCESS;
+		_response_code = 200;
+	}
+	else if (contentType.find("text/plain") != std::string::npos)
+	{
+		std::ofstream outFile((routeRequest.http_redirections + "/text_data.txt").c_str());
+		if (outFile.is_open())
+		{
+			outFile << body;
+			outFile.close();
+		}
+		_response << TEXT_UPLOAD_SUCCESS;
 		_response_code = 200;
 	}
 	else
 	{
-
+		_response << parseErrorPage("415");
+		_response_code = 400;
 	}
-
-	/*
-	cout << "+++++++++++++++++++++++++++++++++" << endl;
-	cout << contentType << endl;
-	cout << "+++++++++++++++++++++++++++++++++" << endl;
-	cout << body << endl;
-	cout << "+++++++++++++++++++++++++++++++++" << endl;
-	*/
 }
 
-void processSinglePart(const std::string &body, const std::string &boundary, const std::string &path)
+void processBody(const std::string &body, const std::string &boundary, const std::string &path)
 {
-    // Encontrar el inicio de la parte (después del boundary)
-    size_t startPos = body.find(boundary);
-    if (startPos == std::string::npos) {
-        std::cerr << "Boundary no encontrado en el cuerpo de la solicitud." << std::endl;
-        return;
-    }
-    startPos += boundary.length() + 2; // Moverse después del boundary y CRLF
+	size_t start, end, filename_start, filename_end;
+	std::string filename;
+	std::ofstream file;
 
-    // Encontrar el final de la parte
-    size_t endPos = body.find(boundary, startPos);
-    if (endPos == std::string::npos) {
-        endPos = body.length();
-    }
+	start = body.find("Content-Disposition");
+	
+	if (start == std::string::npos)
+		return;
 
-    std::string part = body.substr(startPos, endPos - startPos);
+	filename_start = body.find("filename=\"", start) + 10;
+	filename_end = body.find("\"", filename_start);
 
-	cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||" << endl;
-	cout << part;
-	cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||" << endl;
+	filename = body.substr(filename_start, filename_end - filename_start);
 
-    std::istringstream partStream(part);
-    std::string line;
-    std::string filename;
-    std::string contentDisposition;
-    std::string contentType;
-    std::vector<char> content;
+	start = body.find("\r\n\r\n", filename_end) + 4;
+	end = body.find(boundary, start) - 4;
 
-    // Leer encabezados de la parte
-    while (std::getline(partStream, line) && !line.empty())
-	{
-        if (line.find("Content-Disposition:") != std::string::npos)
-		{
-            contentDisposition = line;
-            size_t filenamePos = line.find("filename=\"");
-            if (filenamePos != std::string::npos)
-			{
-                size_t start = filenamePos + 10;
-                size_t end = line.find("\"", start);
-                filename = line.substr(start, end - start);
-            }
-        }
-		else if (line.find("Content-Type:") != std::string::npos){
-            contentType = line;
-        }
-    }
+	file.open((path + "/" + filename).c_str(), std::ios::binary);
+	
+	if (!file.is_open())
+		return;
 
-    // Saltar la línea en blanco después de los encabezados
-    std::getline(partStream, line);
-
-    // Leer el contenido del archivo de forma binaria
-    std::copy(std::istreambuf_iterator<char>(partStream),
-              std::istreambuf_iterator<char>(),
-              std::back_inserter(content));
-
-    // Si hay un archivo, guardarlo
-    if (!filename.empty()) {
-        std::ofstream outFile(path + filename, std::ios::binary);
-        if (outFile.is_open()) {
-            outFile.write(content.data(), content.size());
-            outFile.close();
-            std::cout << "Archivo guardado: " << filename << std::endl;
-            std::cout << "Ruta guardado: " << path + filename << std::endl;
-        } else {
-            std::cerr << "Error al abrir el archivo para escribir: " << filename << std::endl;
-        }
-    } else {
-        std::cerr << "No se pudo encontrar el nombre del archivo en el cuerpo de la solicitud." << std::endl;
-    }
+	file.write(body.data() + start, end - start);
+	file.close();
 }
 
 string	extractBoundary(const std::string &contentType)
@@ -167,24 +127,57 @@ string	extractBoundary(const std::string &contentType)
 void Response::handleMultipartFormData(std::string &body, std::string &contentType, std::string &path)
 {
 
-    std::string boundary = extractBoundary(contentType);
-    if (boundary.empty()) {
-        std::cerr << "Boundary no encontrado en el Content-Type." << std::endl;
-        return;
-    }
+	std::string boundary = extractBoundary(contentType);
+	if (boundary.empty()) {
+		std::cerr << "Boundary no encontrado en el Content-Type." << std::endl;
+		return;
+	}
 
-    processSinglePart(body, boundary, path);
+	processBody(body, boundary, path);
 }
 
 void	Response::handleDelete()
 {
+	string	path = _request_parse.getField(HTTPRequestParse::PATH);
+	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
+	t_route	routeRequest;
 
+	if (isValidRoute(path, _server.getLocations(), routeRequest) == false)
+	{
+		_response << parseErrorPage("404");
+		_response_code = 404;
+		return ;
+	}
+	else if (hasWritePermission(routeRequest.http_redirections) == false)
+	{
+		_response << parseErrorPage("403");
+		_response_code = 403;
+		return ;
+	}
+	else if (isValidMethod(method, routeRequest.accepted_http_methods) == false)
+	{
+		_response << parseErrorPage("405");
+		_response_code = 405;
+		return ;
+	}
+
+	//intentamos borrar
+	if (remove(path.c_str()) == 0)
+	{
+		_response << FILE_DELETE_SUCCESS;
+		_response_code = 200;
+	}
+	else
+	{
+		_response << parseErrorPage("500");
+		_response_code = 500;
+	}
 }
 
 void	Response::handleGet()
 {
 	string	path = _request_parse.getField(HTTPRequestParse::PATH);
-	string	method = _request_parse.getField(HTTPRequestParse::PATH);
+	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
 	t_route	routeRequest;
 
 	//Comprobamos que la ruta sea accesible, que tengamos permisos y el metodo valido para esa ruta
@@ -201,7 +194,7 @@ void	Response::handleGet()
 		_response_code = 403;
 		return ;
 	}
-	else if (isValidMethod(method) == false)
+	else if (isValidMethod(method, routeRequest.accepted_http_methods) == false)
 	{
 		_response << parseErrorPage("405");
 		_response_code = 405;
@@ -275,6 +268,8 @@ string	Response::parseErrorPage(string errorCode)
 		responseError << METHOD_NOT_ALLOWED_ERROR;
 	else if (errorCode == "500")
 		responseError << INTERNAL_SERVER_ERROR;
+	else if (errorCode == "415")
+		responseError << UNSUPPORTED_MEDIA_TYPE_ERROR;
 	
 	return responseError.str();
 }
@@ -283,8 +278,8 @@ bool	Response::isValidRoute(string &path, list<t_route> locations, t_route &matc
 {
 	for (list<t_route>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
-		//verifica si la ruta solicitada (path) coinciide con alguna ruta de la configuracoion (search_dir)
-		if (path.find(it->search_dir) == 0)
+		//verifica si la ruta solicitada (path) coinciide con alguna ruta de la configuracoion (http_redirections)
+		if (path.find(it->http_redirections) == 0)
 		{
 			matchedRoute = *it;
 			return true;
@@ -313,10 +308,17 @@ bool	Response::hasWritePermission(string& path)
 	return (info.st_mode & S_IWUSR) || (info.st_mode & S_IWGRP) || (info.st_mode & S_IWOTH);
 }
 
-bool	Response::isValidMethod(string &method)
+bool Response::isValidMethod(string &method, list<string> accepted_http_methods)
 {
-	(void)method;
-	return true;
+	for (std::list<std::string>::const_iterator it = accepted_http_methods.begin();
+		 it != accepted_http_methods.end(); ++it)
+	{
+		if (*it == method)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Response::isDirectory(string& path)
