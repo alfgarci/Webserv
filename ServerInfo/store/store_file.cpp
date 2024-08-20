@@ -12,6 +12,8 @@ static void change_indenation_level(int &indentation_level, string s)
 				indentation_level = server_level;
 			if (indentation_level == cgi_level)
 				indentation_level = route_level;
+			if (indentation_level == error_level)
+				indentation_level = server_level;
 		}
 	}
 	else
@@ -24,6 +26,8 @@ static void change_indenation_level(int &indentation_level, string s)
 				indentation_level = route_level;
 			if (ServerInfo::check_for_keyword(s, Route_dictionary.at(CGI)))
 				indentation_level = cgi_level;
+			if (ServerInfo::check_for_keyword(s, Server_dictionary.at(error_page)))
+				indentation_level = error_level;
 		}
 	}
 }
@@ -57,38 +61,6 @@ static void start_store_file (std::fstream &file, int &indentation_level, string
 	if (!file.is_open())
 		throw std::logic_error(ERROR_CANT_OPEN_FILE);
 	enforce_syntax(path);
-}
-
-/*
-IMPORTANT NOTE, here i use the lst_server.front() to acces the first server struct
-order the servers, in order of NEWER --> OLDER in the lst, bear that in mind.
-*/
-static void select_store_method(list<t_server> &lst_server, int indentation_level, string s)
-{
-	if
-	(
-		indentation_level == base_level
-		&& ServerInfo::check_for_keyword(s, Base_dictionary.at(server))
-	)
-		lst_server.push_front(ServerInfo::initiate_server());
-	if
-	(
-		indentation_level == server_level
-		&& ServerInfo::check_for_keyword(s, Server_dictionary.at(route))
-	)
-		lst_server.front().routes.push_front(ServerInfo::initiate_route());
-	if
-	(
-		indentation_level == route_level
-		&& ServerInfo::check_for_keyword(s, Route_dictionary.at(CGI))
-	)
-		lst_server.front().routes.front().cgi.push_front(ServerInfo::initiate_cgi());
-	if (indentation_level == server_level)
-		ServerInfo::store_server(s, lst_server.front());
-	if (indentation_level == route_level)
-		ServerInfo::store_route(s, lst_server.front());
-	if (indentation_level == cgi_level)
-		ServerInfo::store_cgi(s, lst_server.front());
 }
 
 /*
