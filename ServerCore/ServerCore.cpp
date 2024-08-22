@@ -278,6 +278,7 @@ void	ServerCore::readCGI(Client &client, Cgi &Cgi)
 	}
 	
 	client.setResponse(response);
+	client.setResponseCode(200);
 	client.setCgiState(CGIDone);
 
 	close(Cgi.pipeOut[0]);

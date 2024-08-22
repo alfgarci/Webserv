@@ -55,7 +55,6 @@ bool	Response::checkCgiRequest(string path, list<t_route> routes)
 	return false;
 }
 
-
 void	Response::makeResponse()
 {
 
@@ -236,6 +235,7 @@ void	Response::handleGet()
 {
 	string	path = _request_parse.getField(HTTPRequestParse::PATH);
 	string	method = _request_parse.getField(HTTPRequestParse::METHOD);
+
 	t_route	routeRequest;
 
 	//Comprobamos que la ruta sea accesible, que tengamos permisos y el metodo valido para esa ruta

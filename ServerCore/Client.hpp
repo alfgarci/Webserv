@@ -53,6 +53,7 @@ public:
 	void				setRequestBytesRead(int bytes_read) {this->_request_bytes_read = bytes_read; };
 	void				setCgiState(int state){ this->_stateCgi = state; };
 	void				setResponse(string response){ this->_response = response; };
+	void				setResponseCode(int code){ this->_response_code = code; };
 
 	int					getSocketClient(){ return this->_socket_client; };
 	string				getResponse(){ return this->_response; };

@@ -29,6 +29,8 @@ using std::transform;
 #define POINT '.'
 #define SLASH '/'
 #define SPACE ' '
+#define QUESTION_MARK '?' 
+#define EQUALS '='
 #define UNDERSCORE '_'
 #define DEC_MODE 10
 #define HEX_MODE 16

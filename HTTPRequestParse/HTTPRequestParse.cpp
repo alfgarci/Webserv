@@ -63,7 +63,7 @@ bool HTTPRequestParse::isValidPathFormat(const string& path)
     for (size_t i = 0; i < path.size(); ++i)
     {
         char c = path[i];
-        if (!(isalnum(c) || c == SLASH || c == HYPHEN || c == UNDERSCORE || c == POINT))
+        if (!(isalnum(c) || c == SLASH || c == HYPHEN || c == UNDERSCORE || c == POINT || c != QUESTION_MARK || c != EQUALS))
             return (false);
     }
     return (true);

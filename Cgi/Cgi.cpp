@@ -137,7 +137,7 @@ int    Cgi::initEnvCgi()
 	{
 		return 404;
 	}
-	
+
 	if (_request.getField(HTTPRequestParse::METHOD) == "POST")
 	{
 		_env["CONTENT_TYPE"] = _request.getField(HTTPRequestParse::CONTENT_TYPE);
@@ -213,23 +213,18 @@ void	Cgi::executeCgi()
 
 void Cgi::reset()
 {
-    // Restablecer las tuberías
     pipeIn[0] = -1;
     pipeIn[1] = -1;
     pipeOut[0] = -1;
     pipeOut[1] = -1;
     
-    // Restablecer el PID del proceso CGI
     _pid = -1;
 
-    // Limpiar el mapa de variables de entorno
     _env.clear();
 
-    // Restablecer la solicitud y otros datos asociados
     _request = HTTPRequestParse();
     _path.clear();
 
-    // Restablecer cualquier otra variable que sea parte del estado del CGI
     _port = 0;
 }
 
