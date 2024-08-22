@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sum Two Numbers</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 48px;
+            color: #3498db;
+            margin: 0;
+        }
+        p {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        form {
+            margin: 20px 0;
+        }
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            font-size: 16px;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sum Two Numbers</h1>
+        <form action="../cgiPrograms/sum.py" method="GET">
+            <input type="number" name="num1" required placeholder="Enter first number">
+            <input type="number" name="num2" required placeholder="Enter second number">
+            <input type="submit" value="Calculate Sum">
+        </form>
+    </div>
+</body>
+</html>

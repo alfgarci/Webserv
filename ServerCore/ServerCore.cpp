@@ -237,6 +237,7 @@ void	ServerCore::sendResponse(int fd, Client &client)
 		{
 			eraseFdSet(fd, _wrt_pool);
 			addFdSet(fd, _recv_pool);
+			client.reset();
 		}
 	}
 }

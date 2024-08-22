@@ -33,6 +33,8 @@ class Cgi
 
 		void    executeCgi();
 
+		void	reset();
+
 		int pipeIn[2]; //para escribir en el CGI
 		int pipeOut[2]; //para leer del cgi
 };

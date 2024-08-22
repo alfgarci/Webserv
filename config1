@@ -9,9 +9,25 @@ server:
 		accepted_http_methods=GET
 		accepted_http_methods=POST
 		accepted_http_methods=DELETE
+		http_redirections=./indexPages
+		default_file=./indexPages/index.html
+		dir_listen=true
+		CGI:
+			files=*.py
+			path=./cgiPrograms
+
+
+	route:
+		accepted_http_methods=GET
+		accepted_http_methods=POST
+		accepted_http_methods=DELETE
 		http_redirections=./upload
 		default_file=./indexPages/index.html
 		dir_listen=true
+		CGI:
+			files=*.py
+			path=./cgiPrograms
+
 
 	error_page:
 		code=400

@@ -63,8 +63,10 @@ public:
 	int					getCgiState(){ return this->_stateCgi; };
 	Cgi					getCgi(){ return this->_cgi; };
 
-	size_t extractContentLength(const std::string& requestData);
+	size_t 				extractContentLength(const std::string& requestData);
 
-	void		doParseRequest();
-	void		makeResponse();
+	void				doParseRequest();
+	void				makeResponse();
+
+	void 				reset();
 };

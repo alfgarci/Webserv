@@ -48,6 +48,7 @@ class Response
 
 		string	getResponse(){ return _response.str(); };
 		int		getResponseCode(){ return _response_code; };
+		HTTPRequestParse	getHTTPRequest(){ return _request_parse; };
 
 		bool	checkCgiRequest(string path, list<t_route> routes);
 		bool	isCgi() { return _isCgi; };

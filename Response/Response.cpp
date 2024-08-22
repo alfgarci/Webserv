@@ -44,7 +44,7 @@ bool	Response::checkCgiRequest(string path, list<t_route> routes)
 		{
 			for (list<t_CGI>::const_iterator cgiIt = routeIt->cgi.begin(); cgiIt != routeIt->cgi.end(); ++cgiIt)
 			{
-				if (path.find(cgiIt->file_targets) != std::string::npos)
+				if (path.find(cgiIt->path_of_cgi) != std::string::npos)
 				{
 					return true;
 				}
