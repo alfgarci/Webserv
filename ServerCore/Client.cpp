@@ -16,13 +16,30 @@ Client::~Client()
 {
 }
 
+std::string checkExecutable(const std::string &cgiPath) 
+{
+    struct stat fileStat;
+
+    if (stat(cgiPath.c_str(), &fileStat) == 0 && (fileStat.st_mode & S_IXUSR))
+    {
+        size_t lastSlashPos = cgiPath.find_last_of("/\\");
+        if (lastSlashPos != std::string::npos)
+        {
+            return cgiPath.substr(lastSlashPos + 1);
+        }
+        return cgiPath;
+    }
+
+    return "";
+}
+
 void	Client::doParseRequest()
 {
 	Response res(_request, _host_server, _port);
 	_resObj = res;
 	_resObj.doParseRequest();
 	//aqui ya se si es cgi
-	if (_isCgi == false)
+	if (_resObj.isCgi() == false)
 	{
 		_resObj.makeResponse();
 		_isKeepAlive = _resObj.isKeepAlive();
@@ -31,8 +48,11 @@ void	Client::doParseRequest()
 	}
 	else
 	{
-		_cgi = Cgi(_parse_request, _host_server, _port);
+		//check si el cgi tiene la extension correspondiente
+		//check si tengo permisos de ejecucion
+		_cgi = Cgi(_resObj.getHTTPRequest(), _host_server, _port);
 		_cgi.initEnvCgi();
+
 		_cgi.executeCgi();
 		setCgiState(CGIPendingWrite);
 	}
@@ -57,4 +77,17 @@ size_t Client::extractContentLength(const std::string& requestData)
 	}
 	
 	return contentLength;
+}
+
+void Client::reset()
+{
+	_request.clear();
+	_response.clear();
+
+	_isKeepAlive = true;
+	
+	_isCgi = false;
+	_cgi.reset();
+
+	_response_code = 0;
 }

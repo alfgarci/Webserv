@@ -52,8 +52,6 @@ Cgi::Cgi(HTTPRequestParse request, Server server, int port)
 		std::cerr << "error: error in creating the Cgi pipes" << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	 
-	initEnvCgi();
 }
 
 string Cgi::getFilePath(string fullPath)
@@ -94,12 +92,7 @@ std::string to_string(size_t value)
 
 void    Cgi::initEnvCgi()
 {
-
 	string  CgiPath = getFilePath(_request.getField(HTTPRequestParse::PATH));
-	if (CgiPath[0] != '/')
-	{
-		CgiPath = "/" + CgiPath;
-	}
 	_path = CgiPath;
 	if (_request.getField(HTTPRequestParse::METHOD) == "POST")
 	{
@@ -153,6 +146,11 @@ void	Cgi::executeCgi()
 		close(pipeIn[1]);
 		close(pipeOut[0]);
 
+		if (access(_path.c_str(), X_OK) != 0) {
+            std::cerr << "error: executable not found or not executable at " << _path << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
 		char **envp = mapToCharArr();
 		char *argv[] = {const_cast<char*>(_path.c_str()), NULL};
 
@@ -167,3 +165,26 @@ void	Cgi::executeCgi()
 		close(pipeOut[1]);
 	}
 }
+
+void Cgi::reset()
+{
+    // Restablecer las tuberías
+    pipeIn[0] = -1;
+    pipeIn[1] = -1;
+    pipeOut[0] = -1;
+    pipeOut[1] = -1;
+    
+    // Restablecer el PID del proceso CGI
+    _pid = -1;
+
+    // Limpiar el mapa de variables de entorno
+    _env.clear();
+
+    // Restablecer la solicitud y otros datos asociados
+    _request = HTTPRequestParse();
+    _path.clear();
+
+    // Restablecer cualquier otra variable que sea parte del estado del CGI
+    _port = 0;
+}
+
