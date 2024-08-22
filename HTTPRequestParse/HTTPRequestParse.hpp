@@ -30,6 +30,8 @@ using std::transform;
 #define SLASH '/'
 #define SPACE ' '
 #define UNDERSCORE '_'
+#define QUESTION_MARK '?' 
+#define EQUALS '='
 #define DEC_MODE 10
 #define HEX_MODE 16
 #define HTTP_LENGTH 5
