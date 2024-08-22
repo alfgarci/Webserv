@@ -51,8 +51,6 @@ bool	ServerInfo::verify_no_defaults(list<t_server> &lst)
 			}
 			if (route_it->default_file_to_answer == DEFAULT_FILE_TO_ANSWER)
 				return (false);
-			if (route_it->http_redirections == DEFAULT_HTTP_REDI)
-				return (false);
 			if (route_it->search_dir == DEFAULT_SEARCH_DIR)
 				route_it->search_dir = server_it->search_dir;
 			route_it++;
