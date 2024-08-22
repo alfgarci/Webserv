@@ -113,7 +113,8 @@ void HTTPRequestParse::parse(const string& request)
         setField(HTTP_VERSION, httpVersion);
     }
     else
-        throw runtime_error(EMPTY_REQUEST);
+        return ;
+        //throw runtime_error(EMPTY_REQUEST);
     // Read and process remaining lines
     while (getline(iss, line))
     {

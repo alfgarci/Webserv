@@ -139,13 +139,13 @@ HTTPREQUESTPARSE_SRCS = \
 
 #-------------------------------------------------------------------SEND_CGI_HANDLE
 
-SEND_CGI_HANDLE_DIR = send_cgi_handle
+CGI_DIR = Cgi
 
-SEND_CGI_HANDLE_CLASS = send_cgi_handle
-SEND_CGI_HANDLE_SRCS_CLASS = $(addsuffix .cpp, $(SEND_CGI_HANDLE_CLASS))
+CGI_CLASS = Cgi
+CGI_SRCS_CLASS = $(addsuffix .cpp, $(CGI_CLASS))
 
-SEND_CGI_HANDLE_SRCS = \
-	$(SEND_CGI_HANDLE_SRCS_CLASS) \
+CGI_SRCS = \
+	$(CGI_SRCS_CLASS) \
 
 #-------------------------------------------------------------------SERVERCORE
 
@@ -182,7 +182,7 @@ RESPONSE_SRCS = \
 SRCS =	\
 		$(addprefix $(SERVER_INFO_DIR)/, $(SERVER_INFO_SRCS)) \
 		$(addprefix $(HTTPREQUESTPARSE_DIR)/, $(HTTPREQUESTPARSE_SRCS)) \
-		$(addprefix $(SEND_CGI_HANDLE_DIR)/, $(SEND_CGI_HANDLE_SRCS)) \
+		$(addprefix $(CGI_DIR)/, $(CGI_SRCS)) \
 		$(addprefix $(TESTER_DIR)/, $(TESTER_SRCS)) \
 		$(addprefix $(SERVERCORE_DIR)/, $(SERVERCORE_SRCS)) \
 		$(addprefix $(RESPONSE_DIR)/, $(RESPONSE_SRCS)) \
