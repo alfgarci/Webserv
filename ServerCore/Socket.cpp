@@ -35,8 +35,8 @@ Socket& Socket::operator=(const Socket &other)
 Socket::Socket(const string & ip, uint16_t port)
 	: _ip(ip), _port(port), _binded(false), _fd(-1), _domain(AF_INET), _type(SOCK_STREAM), _protocol(0)
 {
-    this->_fd = socket(this->_domain, this->_type, this->_protocol);
-    if (this->_fd <= -1)
+	this->_fd = socket(this->_domain, this->_type, this->_protocol);
+	if (this->_fd <= -1)
 		std::cerr << "error: fail socket" << std::endl;
 
 	int reuse_addr = true;
@@ -62,9 +62,9 @@ void Socket::bind(void)
 void Socket::listen(void)
 {
 	if (!this->_binded)
-        std::cerr << "FAIL is binded" << std::endl;
+		std::cerr << "FAIL is binded" << std::endl;
 	if (::listen(this->_fd, 128) <= -1)
-        std::cerr << "error: fail listen" << std::endl;
+		std::cerr << "error: fail listen" << std::endl;
 }
 
 void Socket::close(void)

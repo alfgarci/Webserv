@@ -38,20 +38,20 @@ void	Response::doParseRequest()
 
 bool	Response::checkCgiRequest(string path, list<t_route> routes)
 {
-    for (list<t_route>::const_iterator routeIt = routes.begin(); routeIt != routes.end(); ++routeIt)
-    {
-        if (path.find(routeIt->search_dir) == 0)
-        {
-            for (list<t_CGI>::const_iterator cgiIt = routeIt->cgi.begin(); cgiIt != routeIt->cgi.end(); ++cgiIt)
-            {
-                if (path.find(cgiIt->file_targets) != std::string::npos)
-                {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+	for (list<t_route>::const_iterator routeIt = routes.begin(); routeIt != routes.end(); ++routeIt)
+	{
+		if (path.find(routeIt->search_dir) == 0)
+		{
+			for (list<t_CGI>::const_iterator cgiIt = routeIt->cgi.begin(); cgiIt != routeIt->cgi.end(); ++cgiIt)
+			{
+				if (path.find(cgiIt->file_targets) != std::string::npos)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 

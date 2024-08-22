@@ -80,16 +80,16 @@ string Cgi::getQueryString(string fullPath)
 
 std::string to_string(int value)
 {
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
+	std::stringstream ss;
+	ss << value;
+	return ss.str();
 }
 
 std::string to_string(size_t value)
 {
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
+	std::stringstream ss;
+	ss << value;
+	return ss.str();
 }
 
 void    Cgi::initEnvCgi()

@@ -2,35 +2,35 @@
 
 ServerCore::ServerCore( list<t_server> servers )
 {
-    Server server_tmp;
-    for (list<t_server>::iterator it = servers.begin(); it != servers.end(); ++it)
-    {
-        _servers.push_back(Server(&(*it)));
-    }
-    _max_fd = 0;
-    _select_timer.tv_sec = 1;
-    _select_timer.tv_usec = 0;
+	Server server_tmp;
+	for (list<t_server>::iterator it = servers.begin(); it != servers.end(); ++it)
+	{
+		_servers.push_back(Server(&(*it)));
+	}
+	_max_fd = 0;
+	_select_timer.tv_sec = 1;
+	_select_timer.tv_usec = 0;
 }
 
 void printServerInfo(Server server)
 {
-    std::ostringstream oss;
+	std::ostringstream oss;
 
-    string name = server.getName();
-    string ip = server.getIp();
+	string name = server.getName();
+	string ip = server.getIp();
 
-    oss << "> Server [" << name << "][" << ip << "] ready listening on ports {";
+	oss << "> Server [" << name << "][" << ip << "] ready listening on ports {";
 
-    list<int> ports = server.getPorts();
-    for (list<int>::iterator it = ports.begin(); it != ports.end(); ++it)
-    {
-        oss << *it;
-        if (it != --ports.end())
-            oss << ", ";
-    }
-    oss << "}";
+	list<int> ports = server.getPorts();
+	for (list<int>::iterator it = ports.begin(); it != ports.end(); ++it)
+	{
+		oss << *it;
+		if (it != --ports.end())
+			oss << ", ";
+	}
+	oss << "}";
 
-    std::cout << oss.str() << std::endl;
+	std::cout << oss.str() << std::endl;
 }
 
 void	ServerCore::prepareServer()
@@ -84,7 +84,7 @@ void	ServerCore::launchServers()
 					if (_client_map[i].getCgiState() == CGIPendingWrite)
 					{
 						Cgi Cgi = _client_map[i].getCgi();
-                    	addFdSet(Cgi.pipeIn[1], _wrt_pool);
+						addFdSet(Cgi.pipeIn[1], _wrt_pool);
 					}
 				}
 				else if (FD_ISSET(i, &wrt_tmp) && _client_map.count(i))
@@ -143,8 +143,8 @@ void	ServerCore::readRequest(int fd, Client &client)
 {
 	char			buffer[BUFFER_SIZE];
 	vector<char>	data;
-	data.clear();
 	
+	/*
 	while (true)
 	{
 		memset(buffer, 0, BUFFER_SIZE);
@@ -161,6 +161,47 @@ void	ServerCore::readRequest(int fd, Client &client)
 		}
 		data.insert(data.end(), buffer, buffer + bytesRead);
 	}
+	*/
+
+	size_t contentLength = 0;
+	size_t totalBytesRead = 0;
+
+	while (true)
+	{
+		memset(buffer, 0, BUFFER_SIZE);
+
+		ssize_t bytesRead = recv(fd, buffer, BUFFER_SIZE, 0);
+
+		if (bytesRead < 0)
+		{
+			std::cerr << "error: reading from socket failed" << std::endl;
+			break;
+		}
+		else if (bytesRead == 0)
+		{
+			break;
+		}
+
+		totalBytesRead += bytesRead;
+		data.insert(data.end(), buffer, buffer + bytesRead);
+
+		if (contentLength == 0)
+		{
+			std::string requestData(data.begin(), data.end());
+			contentLength = client.extractContentLength(requestData);
+
+			if (contentLength == 0 && requestData.find("\r\n\r\n") != std::string::npos)
+			{
+				break;
+			}
+		}
+
+		if (contentLength > 0 && totalBytesRead >= contentLength)
+		{
+			break;
+		}
+	}
+
 	std::cout << "> Request received from socket: "<< fd << endl;
 	
 	//analizamos solicitud

@@ -15,10 +15,10 @@ using std::string;
 
 enum CGIState
 { 
-    NoCGI,
-    CGIPendingWrite,
-    CGIPendingRead,
-    CGIDone 
+	NoCGI,
+	CGIPendingWrite,
+	CGIPendingRead,
+	CGIDone 
 };
 
 class Client
@@ -62,6 +62,8 @@ public:
 	HTTPRequestParse	getHTTPRequest(){ return this->_parse_request; };
 	int					getCgiState(){ return this->_stateCgi; };
 	Cgi					getCgi(){ return this->_cgi; };
+
+	size_t extractContentLength(const std::string& requestData);
 
 	void		doParseRequest();
 	void		makeResponse();
