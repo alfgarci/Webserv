@@ -1,18 +1,64 @@
 #include "Response.hpp"
 
-Response::Response(string request_raw, Server server)
+Response::Response()
+{
+}
+
+Response::Response(string request_raw, Server server, int port)
 {
 	_request_raw = request_raw;
 	_server = server;
+	_port = port;
+}
+
+Response::Response(const Response &other)
+{
+	_request_raw = other._request_raw;
+	_server = other._server;
+	_port = other._port;
+}
+
+Response& Response::operator=(const Response &other)
+{
+	if (this != &other)
+	{
+		_request_raw = other._request_raw;
+		_server = other._server;
+		_port = other._port;
+	}
+
+	return *this;
 }
 
 void	Response::doParseRequest()
 {
 	_request_parse = HTTPRequestParse(_request_raw);
+	_isCgi = checkCgiRequest(_request_parse.getField(HTTPRequestParse::PATH), _server.getLocations());
 }
+
+bool	Response::checkCgiRequest(string path, list<t_route> routes)
+{
+	for (list<t_route>::const_iterator routeIt = routes.begin(); routeIt != routes.end(); ++routeIt)
+	{
+		if (path.find(routeIt->search_dir) == 0)
+		{
+			for (list<t_CGI>::const_iterator cgiIt = routeIt->cgi.begin(); cgiIt != routeIt->cgi.end(); ++cgiIt)
+			{
+				if (path.find(cgiIt->path_of_cgi) != std::string::npos)
+				{
+					_fileAcepted = cgiIt->file_targets;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 
 void	Response::makeResponse()
 {
+
 	if (_request_parse.getField(HTTPRequestParse::METHOD) == "GET")
 	{
 		Response::handleGet();
@@ -24,6 +70,11 @@ void	Response::makeResponse()
 	else if (_request_parse.getField(HTTPRequestParse::METHOD) == "DELETE")
 	{
 		Response::handleDelete();
+	}
+	else
+	{
+		_response << parseErrorPage("405");
+		_response_code = 405;
 	}
 }
 
@@ -136,10 +187,10 @@ void Response::handleMultipartFormData(std::string &body, std::string &contentTy
 
 	std::string boundary = extractBoundary(contentType);
 	if (boundary.empty()) {
-		std::cerr << "Boundary no encontrado en el Content-Type." << std::endl;
+		std::cerr << "error: boundary no encontrado en el Content-Type." << std::endl;
 		return;
 	}
-
+	
 	processBody(body, boundary, path);
 }
 
@@ -258,28 +309,82 @@ string	Response::generateFileResponse(string &path)
 	return response.str();
 }
 
+string getBodyErrorFile(string errorCode, list<t_error> errorPages)
+{
+	unsigned int errorCodeInt;
+	istringstream(errorCode) >> errorCodeInt;
+
+	for (list<t_error>::iterator it = errorPages.begin(); it != errorPages.end(); ++it)
+	{
+		if (it->code == errorCodeInt)
+		{
+			if (access(it->path.c_str(), F_OK) == 0)
+			{
+				std::ifstream file(it->path.c_str());
+				if (file.is_open())
+				{
+					ostringstream ss;
+					ss << file.rdbuf();
+					return ss.str();
+				}
+				else
+				{
+					return "";
+				}
+			}
+			else
+			{
+				return "";
+			}
+		}
+	}
+	return "";
+}
+
 string	Response::parseErrorPage(string errorCode)
 {
 	
 	ostringstream	responseError;
-	//IMPORTANTEEEEEEE
-	//checkear que no tengo mis propias error pages
+	list<t_error>	errorPages = _server.getErrorPages();
 
-	if (errorCode == "400")
-		responseError << BAD_REQUEST_ERROR << BAD_REQUEST_ERROR_BODY;
-	else if (errorCode == "403")
-		responseError << FORBIDDEN_ERROR << FORBIDDEN_ERROR_BODY;
-	else if (errorCode == "404")
-		responseError << NOT_FOUND_ERROR << NOT_FOUND_ERROR_BODY;
-	else if (errorCode == "405")
-		responseError << METHOD_NOT_ALLOWED_ERROR << METHOD_NOT_ALLOWED_ERROR_BODY;
-	else if (errorCode == "500")
-		responseError << INTERNAL_SERVER_ERROR << INTERNAL_SERVER_ERROR_BODY;
-	else if (errorCode == "415")
-		responseError << UNSUPPORTED_MEDIA_TYPE_ERROR << UNSUPPORTED_MEDIA_TYPE_ERROR_BODY;
-	else if (errorCode == "413")
-		responseError << PAYLOAD_TOO_LARGE_ERROR << PAYLOAD_TOO_LARGE_ERROR_BODY;
-	
+	string	bodyError = getBodyErrorFile(errorCode, errorPages);
+	if (bodyError == "")
+	{
+		if (errorCode == "400")
+			responseError << BAD_REQUEST_ERROR << BAD_REQUEST_ERROR_BODY;
+		else if (errorCode == "403")
+			responseError << FORBIDDEN_ERROR << FORBIDDEN_ERROR_BODY;
+		else if (errorCode == "404")
+			responseError << NOT_FOUND_ERROR << NOT_FOUND_ERROR_BODY;
+		else if (errorCode == "405")
+			responseError << METHOD_NOT_ALLOWED_ERROR << METHOD_NOT_ALLOWED_ERROR_BODY;
+		else if (errorCode == "500")
+			responseError << INTERNAL_SERVER_ERROR << INTERNAL_SERVER_ERROR_BODY;
+		else if (errorCode == "415")
+			responseError << UNSUPPORTED_MEDIA_TYPE_ERROR << UNSUPPORTED_MEDIA_TYPE_ERROR_BODY;
+		else if (errorCode == "413")
+			responseError << PAYLOAD_TOO_LARGE_ERROR << PAYLOAD_TOO_LARGE_ERROR_BODY;
+	}
+	else
+	{
+		if (errorCode == "400")
+			responseError << BAD_REQUEST_ERROR;
+		else if (errorCode == "403")
+			responseError << FORBIDDEN_ERROR;
+		else if (errorCode == "404")
+			responseError << NOT_FOUND_ERROR;
+		else if (errorCode == "405")
+			responseError << METHOD_NOT_ALLOWED_ERROR;
+		else if (errorCode == "500")
+			responseError << INTERNAL_SERVER_ERROR;
+		else if (errorCode == "415")
+			responseError << UNSUPPORTED_MEDIA_TYPE_ERROR;
+		else if (errorCode == "413")
+			responseError << PAYLOAD_TOO_LARGE_ERROR;
+
+		responseError << bodyError;
+	}
+
 	return responseError.str();
 }
 

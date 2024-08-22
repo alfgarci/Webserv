@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ServerInfo/structs.hpp"
+#include "../Cgi/Cgi.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 #include <vector>
@@ -47,6 +48,9 @@ class ServerCore
 		void	sendResponse(int fd, Client &client);
 
 		void 	sendErrorResponse(int fd, int errorCode, const string& errorPage);
+
+		void	writeCGI(Client &client, Cgi &cgi);
+		void	readCGI(Client &client, Cgi &cgi);
 
 		void	closeConection(int fd);
 };

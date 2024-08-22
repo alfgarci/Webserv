@@ -14,6 +14,9 @@ Server::Server(t_server *info_server)
 	_index = "index.html";
 	_auto_index = false;
 	_locations = info_server->routes;
+	_errorPages = info_server->error_page;
+
+	_map_fd_port.clear();
 }
 
 Server::Server(const Server &other)
@@ -26,8 +29,10 @@ Server::Server(const Server &other)
 	_name = other._name;
 	_root = other._root;
 	_index = other._index;
-	_auto_index = other._auto_index;;
+	_auto_index = other._auto_index;
 	_locations = other._locations;
+	_errorPages = other._errorPages;
+	_map_fd_port = other._map_fd_port;
 }
 
 Server& Server::operator=(const Server &other)
@@ -44,28 +49,51 @@ Server& Server::operator=(const Server &other)
 		_index = other._index;
 		_auto_index = other._auto_index;
 		_locations = other._locations;
+		_errorPages = other._errorPages;
+		_map_fd_port = other._map_fd_port;
 	}
 	return *this;
 }
 
-void	Server::setupSocket()
+void Server::setupSocket()
 {
-	Socket	tmp;
-	int		fd_tmp;
+	Socket tmp;
+	int fd_tmp;
+
 	for (std::list<int>::iterator it = _port.begin(); it != _port.end(); ++it)
 	{
 		tmp = Socket(this->_ip, *it);
 		fd_tmp = tmp.getFd();
 		tmp.bind();
 		tmp.listen();
+		
 		if (fcntl(fd_tmp, F_SETFL, O_NONBLOCK) < 0)
 		{
-			std::cout << "FAIL frnc socket prin" << std::endl;
+			std::cerr << "error: fail fcntl main socket " << std::endl;
 		}
+		_map_fd_port[fd_tmp] = *it;
+		
 		_socket_fd.push_back(fd_tmp);
 		_main_socket.push_back(tmp);
 	}
 }
+
+int Server::getPortByFd(int fd)
+{
+	map<int, int>::iterator it = _map_fd_port.find(fd);
+	
+	// Si se encuentra, devolver el puerto asociado
+	if (it != _map_fd_port.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+
 
 void Server::close()
 {
