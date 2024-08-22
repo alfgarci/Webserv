@@ -12,6 +12,7 @@ Cgi::Cgi(const Cgi &other)
 	_env = other._env;
 	_serverInfo = other._serverInfo;
 	_port = other._port;
+	_validFiles = other._validFiles;
 
 	pipeIn[0] = other.pipeIn[0];
 	pipeIn[1] = other.pipeIn[1];
@@ -30,22 +31,26 @@ Cgi& Cgi::operator=(const Cgi &other)
 		_env = other._env;
 		_serverInfo = other._serverInfo;
 		_port = other._port;
+		_validFiles = other._validFiles;
 
 		pipeIn[0] = other.pipeIn[0];
 		pipeIn[1] = other.pipeIn[1];
 		pipeOut[0] = other.pipeOut[0];
 		pipeOut[1] = other.pipeOut[1];
+	
+
 	}
 
 	return *this;
 }
 
 
-Cgi::Cgi(HTTPRequestParse request, Server server, int port)
+Cgi::Cgi(HTTPRequestParse request, Server server, int port, string validFiles)
 {
 	_request = request;
 	_serverInfo = server;
 	_port = port;
+	_validFiles = validFiles;
 
 	if (pipe(pipeIn) == -1 || pipe(pipeOut) == -1)
 	{
@@ -90,10 +95,49 @@ std::string to_string(size_t value)
 	return ss.str();
 }
 
-void    Cgi::initEnvCgi()
+string checkExecutable(string cgiPath) 
+{
+    struct stat fileStat;
+
+    if (stat(cgiPath.c_str(), &fileStat) == 0 && (fileStat.st_mode & S_IXUSR))
+    {
+        size_t lastSlashPos = cgiPath.find_last_of("/\\");
+        if (lastSlashPos != std::string::npos)
+        {
+            return cgiPath.substr(lastSlashPos + 1);
+        }
+        return cgiPath;
+    }
+    return "";
+}
+
+bool isFileAccepted(string fileName, string filesAccepted)
+{
+    if (filesAccepted.size() > 2 && filesAccepted.substr(0, 2) == "*.")
+    {
+        std::string fileExtension = fileName.substr(fileName.find_last_of('.') + 1);
+        std::string acceptedExtension = filesAccepted.substr(2);
+
+        return fileExtension == acceptedExtension;
+    }
+    return false;
+}
+
+int    Cgi::initEnvCgi()
 {
 	string  CgiPath = getFilePath(_request.getField(HTTPRequestParse::PATH));
+	string	fileName = checkExecutable(CgiPath);
 	_path = CgiPath;
+
+	if (fileName == "")
+	{
+		return 500;
+	}
+	if (isFileAccepted(fileName, _validFiles) == false)
+	{
+		return 404;
+	}
+	
 	if (_request.getField(HTTPRequestParse::METHOD) == "POST")
 	{
 		_env["CONTENT_TYPE"] = _request.getField(HTTPRequestParse::CONTENT_TYPE);
@@ -110,6 +154,7 @@ void    Cgi::initEnvCgi()
 	_env["SERVER_SOFTWARE"] = "42WebServer/1.0";
 	_env["REDIRECT_STATUS"] = "200";
 	_env["PATH_TRANSLATED"] = _serverInfo.getRoot() + getFilePath(_request.getField(HTTPRequestParse::PATH));
+	return 0;
 }
 
 char **Cgi::mapToCharArr()
