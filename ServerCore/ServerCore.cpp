@@ -276,7 +276,7 @@ void	ServerCore::readCGI(Client &client, Cgi &Cgi)
 		closeConection(client.getSocketClient());
 		return;
 	}
-
+	
 	client.setResponse(response);
 	client.setCgiState(CGIDone);
 

@@ -46,6 +46,7 @@ bool	Response::checkCgiRequest(string path, list<t_route> routes)
 			{
 				if (path.find(cgiIt->path_of_cgi) != std::string::npos)
 				{
+					_fileAcepted = cgiIt->file_targets;
 					return true;
 				}
 			}

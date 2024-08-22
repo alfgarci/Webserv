@@ -4,6 +4,8 @@
 # include "../ServerCore/Server.hpp"
 # include <map>
 # include <unistd.h>
+#	include <sys/stat.h>
+
 
 class Cgi
 {
@@ -13,6 +15,7 @@ class Cgi
 		pid_t               _pid;
 		map<string, string> _env;
 		Server              _serverInfo;
+		string				_validFiles;
 
 		int                 _port;
 
@@ -21,9 +24,9 @@ class Cgi
 		Cgi();
 		Cgi(const Cgi &other);
 		Cgi& operator=(const Cgi &other);
-		Cgi(HTTPRequestParse request, Server server, int port);
+		Cgi(HTTPRequestParse request, Server server, int port, string validFiles);
 
-		void    initEnvCgi();
+		int    	initEnvCgi();
 		string  getFilePath(string fullPath);
 		string  getQueryString(string fullPath);
 		char    **mapToCharArr();

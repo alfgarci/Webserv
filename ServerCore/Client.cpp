@@ -16,25 +16,9 @@ Client::~Client()
 {
 }
 
-std::string checkExecutable(const std::string &cgiPath) 
-{
-    struct stat fileStat;
-
-    if (stat(cgiPath.c_str(), &fileStat) == 0 && (fileStat.st_mode & S_IXUSR))
-    {
-        size_t lastSlashPos = cgiPath.find_last_of("/\\");
-        if (lastSlashPos != std::string::npos)
-        {
-            return cgiPath.substr(lastSlashPos + 1);
-        }
-        return cgiPath;
-    }
-
-    return "";
-}
-
 void	Client::doParseRequest()
 {
+	int	error;
 	Response res(_request, _host_server, _port);
 	_resObj = res;
 	_resObj.doParseRequest();
@@ -50,11 +34,21 @@ void	Client::doParseRequest()
 	{
 		//check si el cgi tiene la extension correspondiente
 		//check si tengo permisos de ejecucion
-		_cgi = Cgi(_resObj.getHTTPRequest(), _host_server, _port);
-		_cgi.initEnvCgi();
-
-		_cgi.executeCgi();
-		setCgiState(CGIPendingWrite);
+		_cgi = Cgi(_resObj.getHTTPRequest(), _host_server, _port, _resObj.getFileAceptedCgi());
+		error = _cgi.initEnvCgi();
+		if (error > 0)
+		{
+			if (error == 404)
+				_response = _resObj.parseErrorPage("404");
+			else if (error == 500)
+				_response = _resObj.parseErrorPage("500");
+			_response_code = error;
+		}
+		else
+		{
+			_cgi.executeCgi();
+			setCgiState(CGIPendingWrite);
+		}
 	}
 }
 

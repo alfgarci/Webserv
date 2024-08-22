@@ -29,6 +29,7 @@ class Response
 		ostringstream 		_response;
 
 		bool				_isCgi;
+		string				_fileAcepted;
 		
 	public:
 		Response();
@@ -49,6 +50,7 @@ class Response
 		string	getResponse(){ return _response.str(); };
 		int		getResponseCode(){ return _response_code; };
 		HTTPRequestParse	getHTTPRequest(){ return _request_parse; };
+		string	getFileAceptedCgi(){ return _fileAcepted; };
 
 		bool	checkCgiRequest(string path, list<t_route> routes);
 		bool	isCgi() { return _isCgi; };
