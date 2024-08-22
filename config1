@@ -9,6 +9,7 @@ server:
 		accepted_http_methods=GET
 		accepted_http_methods=POST
 		accepted_http_methods=DELETE
+		http_redirections=./index
 		default_file=./indexPages/index.html
 		dir_listen=true
 		CGI:
@@ -21,10 +22,10 @@ server:
 		accepted_http_methods=POST
 		accepted_http_methods=DELETE
 		http_redirections=./upload
-		default_file=./indexPages/index.html
+		default_file=./upload/indexUpload.html
 		dir_listen=true
 		CGI:
-			files=*.py
+			files=*.pl
 			path=./cgiPrograms
 
 
