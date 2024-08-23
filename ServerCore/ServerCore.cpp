@@ -146,25 +146,8 @@ void	ServerCore::readRequest(int fd, Client &client)
 {
 	char			buffer[BUFFER_SIZE];
 	vector<char>	data;
-	/*
-	while (true)
-	{
-		memset(buffer, 0, BUFFER_SIZE);
-
-		ssize_t bytesRead = recv(fd, buffer, BUFFER_SIZE, 0);
-
-		if (bytesRead < 0)
-		{
-			break ;
-		}
-		else if (bytesRead == 0)
-		{
-			break ;
-		}
-		data.insert(data.end(), buffer, buffer + bytesRead);
-	}
-	*/
 	size_t totalBytesRead = 0;
+
 	while (true)
     {
         memset(buffer, 0, BUFFER_SIZE);
@@ -185,23 +168,17 @@ void	ServerCore::readRequest(int fd, Client &client)
         }
         else if (bytesRead == 0)
         {
-            // El cliente ha cerrado la conexión
             break;
         }
 
-        // Añadir los datos leídos al vector data
         data.insert(data.end(), buffer, buffer + bytesRead);
         totalBytesRead += bytesRead;
 
-        // Verificar si ya hemos leído todo el contenido esperado (si se conoce)
         if (client.isRequestComplete(data))
         {
             break;
         }
     }
-
-	std::cout << "> Request received from socket: "<< fd << endl;
-	cout << std::string(data.begin(), data.end());
 	
 	//analizamos solicitud
 	client.setRequest(std::string(data.begin(), data.end()));
