@@ -56,7 +56,6 @@ server:
 		accepted_http_methods=GET
 		accepted_http_methods=POST
 		http_redirections=./indexPages
-		http_redirections=./cgiPrograms
 		default_file=./indexPages/index.html
 		dir_listen=true
 		CGI:

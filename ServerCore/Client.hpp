@@ -75,4 +75,6 @@ public:
 	void				makeResponse();
 
 	void 				reset();
+
+	bool				isRequestComplete(const std::vector<char>& data);
 };

@@ -164,46 +164,44 @@ void	ServerCore::readRequest(int fd, Client &client)
 		data.insert(data.end(), buffer, buffer + bytesRead);
 	}
 	*/
-	size_t contentLength = 0;
 	size_t totalBytesRead = 0;
-
 	while (true)
-	{
-		memset(buffer, 0, BUFFER_SIZE);
+    {
+        memset(buffer, 0, BUFFER_SIZE);
 
-		ssize_t bytesRead = recv(fd, buffer, BUFFER_SIZE, 0);
+        ssize_t bytesRead = recv(fd, buffer, BUFFER_SIZE, 0);
 
-		if (bytesRead < 0)
-		{
-			std::cerr << "error: reading from socket failed" << std::endl;
-			break;
-		}
-		else if (bytesRead == 0)
-		{
-			break;
-		}
+        if (bytesRead < 0)
+        {
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                break;
+            }
+            else
+            {
+                std::cerr << "Error: Failed to read from socket" << std::endl;
+                return;
+            }
+        }
+        else if (bytesRead == 0)
+        {
+            // El cliente ha cerrado la conexión
+            break;
+        }
 
-		totalBytesRead += bytesRead;
-		data.insert(data.end(), buffer, buffer + bytesRead);
+        // Añadir los datos leídos al vector data
+        data.insert(data.end(), buffer, buffer + bytesRead);
+        totalBytesRead += bytesRead;
 
-		if (contentLength == 0)
-		{
-			std::string requestData(data.begin(), data.end());
-			contentLength = client.extractContentLength(requestData);
-
-			if (contentLength == 0 && requestData.find("\r\n\r\n") != std::string::npos)
-			{
-				break;
-			}
-		}
-
-		if (contentLength > 0 && totalBytesRead >= contentLength)
-		{
-			break;
-		}
-	}
+        // Verificar si ya hemos leído todo el contenido esperado (si se conoce)
+        if (client.isRequestComplete(data))
+        {
+            break;
+        }
+    }
 
 	std::cout << "> Request received from socket: "<< fd << endl;
+	cout << std::string(data.begin(), data.end());
 	
 	//analizamos solicitud
 	client.setRequest(std::string(data.begin(), data.end()));
