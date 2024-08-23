@@ -10,6 +10,7 @@ Client::Client(Server serv, int port)
 	_parse_finish = false;
 	_port = port;
 	_stateCgi = NoCGI;
+	_last_message = time(NULL);
 }
 
 Client::~Client()

@@ -14,6 +14,7 @@
 #include "../libs/to_string.hpp"
 
 # define BUFFER_SIZE 500000
+# define TIMEOUT 30
 
 using std::string;
 using std::map;
@@ -51,6 +52,8 @@ class ServerCore
 
 		void	writeCGI(Client &client, Cgi &cgi);
 		void	readCGI(Client &client, Cgi &cgi);
+
+		void	checkClientTimeOut();
 
 		void	closeConection(int fd);
 };

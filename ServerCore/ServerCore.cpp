@@ -19,7 +19,7 @@ void printServerInfo(Server server)
 	string name = server.getName();
 	string ip = server.getIp();
 
-	oss << "> Server [" << name << "][" << ip << "] ready listening on ports {";
+	oss << "> Server [" << name << "]\t[" << ip << "]\tready listening on Ports {";
 
 	list<int> ports = server.getPorts();
 	for (list<int>::iterator it = ports.begin(); it != ports.end(); ++it)
@@ -28,7 +28,7 @@ void printServerInfo(Server server)
 		if (it != --ports.end())
 			oss << ", ";
 	}
-	oss << "}";
+	oss << "} .....";
 
 	std::cout << oss.str() << std::endl;
 }
@@ -64,6 +64,8 @@ void	ServerCore::launchServers()
 	{
 		recv_tmp = _recv_pool;
 		wrt_tmp = _wrt_pool;
+		select_timer.tv_sec = 1;
+		select_timer.tv_usec = 0;
 
 		if (select(_max_fd + 1, &recv_tmp, &wrt_tmp, NULL, &_select_timer) < 0)
 		{
@@ -112,6 +114,7 @@ void	ServerCore::launchServers()
 				}
 			}
 		}
+		checkClientTimeOut();
 	}
 }
 
@@ -143,7 +146,6 @@ void	ServerCore::readRequest(int fd, Client &client)
 {
 	char			buffer[BUFFER_SIZE];
 	vector<char>	data;
-	
 	/*
 	while (true)
 	{
@@ -162,7 +164,6 @@ void	ServerCore::readRequest(int fd, Client &client)
 		data.insert(data.end(), buffer, buffer + bytesRead);
 	}
 	*/
-
 	size_t contentLength = 0;
 	size_t totalBytesRead = 0;
 
@@ -211,6 +212,7 @@ void	ServerCore::readRequest(int fd, Client &client)
 
 	eraseFdSet(fd, _recv_pool);
 	addFdSet(fd, _wrt_pool);
+
 	data.clear();
 }
 
@@ -307,4 +309,18 @@ void	ServerCore::closeConection(int fd)
 	
 	close(fd);
 	_client_map.erase(fd);
+	cout << "> Client with socket " << fd << " disconnected" << endl;
+}
+
+void	ServerCore::checkClientTimeOut()
+{
+	for(map<int, Client>::iterator it = _client_map.begin(); it != _client_map.end(); ++it)
+	{
+		if (time(NULL) - it->second.getLastMessage() > TIMEOUT)
+		{
+			cout << "> Client with socket " << it->first << " has exceeded the " << TIMEOUT << " second timeout" << endl;
+			closeConection(it->first);
+			return ;
+		}
+	}
 }

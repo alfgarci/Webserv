@@ -55,7 +55,7 @@ void Socket::bind(void)
 		return;
 	bind_status = ::bind(this->_fd, reinterpret_cast< const struct sockaddr * >(&this->_sockaddr), sizeof(this->_sockaddr));
 	if (bind_status <= -1)
-		std::cerr << "error: fail bind" << std::endl;
+		std::cerr << "error: fail bind (The PORT: " <<  this->_port << " was already working)" << std::endl;
 	this->_binded = true;
 }
 
