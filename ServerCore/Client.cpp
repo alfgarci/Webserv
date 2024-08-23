@@ -17,6 +17,19 @@ Client::~Client()
 {
 }
 
+bool isDirectory(string path) 
+{
+    struct stat info;
+
+    if (stat(path.c_str(), &info) != 0) 
+    {
+        std::cerr << "Error: No se pudo acceder a la ruta." << std::endl;
+        return false;
+    }
+
+    return (info.st_mode & S_IFDIR) != 0;
+}
+
 void	Client::doParseRequest()
 {
 	int	error;
@@ -33,6 +46,13 @@ void	Client::doParseRequest()
 	}
 	else
 	{
+		string pathTmp = _resObj.getHTTPRequest().getField(HTTPRequestParse::PATH);
+		if(isDirectory(pathTmp) == true)
+		{
+			_response = _resObj.parseErrorPage("404");
+			_response_code = 400;
+			return ;
+		}
 		//check si el cgi tiene la extension correspondiente
 		//check si tengo permisos de ejecucion
 		_cgi = Cgi(_resObj.getHTTPRequest(), _host_server, _port, _resObj.getFileAceptedCgi());
