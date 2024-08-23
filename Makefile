@@ -22,7 +22,7 @@ LYELLOW = \033[1;33m
 WHITE = \033[1;37m
 RESET = \033[0m
 
-MAIN = tester_main
+MAIN = main
 
 #-------------------------------------------------------------------SERVER_INFO
 

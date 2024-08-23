@@ -10,6 +10,7 @@ Client::Client(Server serv, int port)
 	_parse_finish = false;
 	_port = port;
 	_stateCgi = NoCGI;
+	_last_message = time(NULL);
 }
 
 Client::~Client()
@@ -71,6 +72,34 @@ size_t Client::extractContentLength(const std::string& requestData)
 	}
 	
 	return contentLength;
+}
+
+bool Client::isRequestComplete(const std::vector<char>& data)
+{
+    std::string requestData(data.begin(), data.end());
+
+    size_t pos = requestData.find("Content-Length:");
+    if (pos != std::string::npos)
+    {
+        size_t endPos = requestData.find("\r\n", pos);
+        std::string contentLengthStr = requestData.substr(pos + 15, endPos - (pos + 15));
+
+        // Convertir la cadena de texto a un tamaño (size_t)
+        std::stringstream ss(contentLengthStr);
+        size_t contentLength = 0;
+        ss >> contentLength;
+
+        size_t headerEnd = requestData.find("\r\n\r\n");
+
+        if (headerEnd != std::string::npos)
+        {
+            size_t bodyStart = headerEnd + 4;
+            size_t bodyLength = data.size() - bodyStart;
+
+            return bodyLength >= contentLength;
+        }
+    }
+    return false;
 }
 
 void Client::reset()

@@ -1,0 +1,92 @@
+server:
+	port=8000
+	host=127.0.0.1
+	port=8001
+	server_name=anvial
+	search_dir=./
+	body_limit=10480144
+	route:
+		accepted_http_methods=GET
+		accepted_http_methods=POST
+		http_redirections=./indexPages
+		default_file=./indexPages/index.html
+		dir_listen=true
+		CGI:
+			files=*.py
+			path=./cgiPrograms
+
+
+	route:
+		accepted_http_methods=GET
+		accepted_http_methods=POST
+		accepted_http_methods=DELETE
+		http_redirections=./upload
+		default_file=./upload/indexUpload.html
+		dir_listen=true
+
+	error_page:
+		code=400
+		path=./errorPages/400.html
+
+	error_page:
+		code=403
+		path=./errorPages/403.html
+
+	error_page:
+		code=404
+		path=./errorPages/404.html
+
+	error_page:
+		code=405
+		path=./errorPages/405.html
+
+	error_page:
+		code=500
+		path=./errorPages/500.html
+
+
+server:
+	port=8006
+	host=127.0.0.1
+	port=8002
+	server_name=server42.com
+	search_dir=./
+	body_limit=104801
+	route:
+		accepted_http_methods=GET
+		accepted_http_methods=POST
+		http_redirections=./indexPages
+		default_file=./indexPages/index.html
+		dir_listen=true
+		CGI:
+			files=*.py
+			path=./cgiPrograms
+
+
+	route:
+		accepted_http_methods=GET
+		accepted_http_methods=POST
+		accepted_http_methods=DELETE
+		http_redirections=./upload
+		default_file=./upload/indexUpload.html
+		dir_listen=true
+
+	error_page:
+		code=400
+		path=./errorPages/400.html
+
+	error_page:
+		code=403
+		path=./errorPages/403.html
+
+	error_page:
+		code=404
+		path=./errorPages/404.html
+
+	error_page:
+		code=405
+		path=./errorPages/405.html
+
+	error_page:
+		code=500
+		path=./errorPages/500.html
