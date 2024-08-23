@@ -74,51 +74,49 @@ using std::transform;
 
 class HTTPRequestParse
 {
-    public:
-        enum FieldType
-        {
-            METHOD,
-            PATH,
-            HTTP_VERSION,
-            HOST,
-            CONNECTION,
-            CONTENT_LENGTH,
-            CONTENT_TYPE,
-            TRANSFER_ENCODING,
-            BODY,
-            PORT
-        };
-        // Constructors
-        HTTPRequestParse(void);
-        explicit HTTPRequestParse(const string& request);
-        // Destructor
-        ~HTTPRequestParse();
-        // Copy constructor
-        HTTPRequestParse(const HTTPRequestParse &HTTPRequestParse);
-        // Assignation operator
-        HTTPRequestParse &operator=(HTTPRequestParse const &HTTPRequestParse);
-        // Function to check HTTP request
-        void parse(const string& request);
-        // Get field value
-        string getField(FieldType field) const;
-        // Set field value
-        void setField(FieldType field, const string& value);
+	public:
+		enum FieldType
+		{
+			METHOD,
+			PATH,
+			HTTP_VERSION,
+			HOST,
+			CONNECTION,
+			CONTENT_LENGTH,
+			CONTENT_TYPE,
+			TRANSFER_ENCODING,
+			BODY,
+			PORT
+		};
+		// Constructors
+		HTTPRequestParse(void);
+		explicit HTTPRequestParse(const string& request);
+		// Destructor
+		~HTTPRequestParse();
+		// Copy constructor
+		HTTPRequestParse(const HTTPRequestParse &HTTPRequestParse);
+		// Assignation operator
+		HTTPRequestParse &operator=(HTTPRequestParse const &HTTPRequestParse);
+		// Function to check HTTP request
+		void parse(const string& request);
+		// Get field value
+		string getField(FieldType field) const;
+		// Set field value
+		void setField(FieldType field, const string& value);
 
-    private:
-        // For storing field values
-        map<FieldType, string> fieldValues;
-        // For checking is field is included into the HTTP
-        map<FieldType, bool> fieldFound;
-        // For checking if field value is set
-        map<FieldType, bool> fieldSet;
-        // Function to check if method is valid
-        static bool isValidHTTPMethod(const string& method);
-        // Function to check if HTTP versión is valid
-        static bool isValidHTTPVersion(const string& version);
-        // Function to check if path versión is valid
-        static bool isValidPathFormat(const string& path);
-        // Function to erase unnecessary spaces
-        static string trim(const string& str);
+	private:
+		// For storing field values
+		map<FieldType, string> fieldValues;
+		// For checking is field is included into the HTTP
+		map<FieldType, bool> fieldFound;
+		// For checking if field value is set
+		map<FieldType, bool> fieldSet;
+		// Function to check if HTTP versión is valid
+		static bool isValidHTTPVersion(const string& version);
+		// Function to check if path versión is valid
+		static bool isValidPathFormat(const string& path);
+		// Function to erase unnecessary spaces
+		static string trim(const string& str);
 };
 
 #endif // HTTP_REQUEST_HPP
